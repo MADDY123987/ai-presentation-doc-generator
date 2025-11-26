@@ -1,7 +1,8 @@
 // src/components/Navbar.jsx
 import React from "react";
+import { NavLink } from "react-router-dom";
 
-function Navbar({ activePage, onChangePage, user, onLogout }) {
+function Navbar({ user, onLogout }) {
   const displayName = user?.name || user?.email || "Guest";
   const initial =
     (user?.name && user.name[0]) ||
@@ -10,56 +11,41 @@ function Navbar({ activePage, onChangePage, user, onLogout }) {
 
   const isLoggedIn = !!user;
 
-  const handleNavClick = (page) => {
-    const protectedPages = ["dashboard", "ppt", "word"];
-    if (!isLoggedIn && protectedPages.includes(page)) {
-      onChangePage("login");
-    } else {
-      onChangePage(page);
-    }
-  };
+  const linkClass = ({ isActive }) =>
+    isActive ? "nav-link nav-link-active" : "nav-link";
 
   return (
     <header className="navbar">
       <div className="navbar-inner">
-        <div className="nav-left" onClick={() => handleNavClick("home")}>
+        {/* LEFT: Logo → Home */}
+        <NavLink to="/" className="nav-left">
           <div className="nav-logo-dot">PAI</div>
           <div className="nav-logo-text">
             <span>Presentations AI</span>
             <small>Docs & Slides Studio</small>
           </div>
-        </div>
+        </NavLink>
 
+        {/* CENTER: Tabs — use NavLink so Router controls active state */}
         <div className="nav-center">
-          <button
-            className={activePage === "home" ? "nav-link nav-link-active" : "nav-link"}
-            onClick={() => handleNavClick("home")}
-          >
+          <NavLink to="/" className={linkClass} end>
             Home
-          </button>
+          </NavLink>
 
-          <button
-            className={activePage === "dashboard" ? "nav-link nav-link-active" : "nav-link"}
-            onClick={() => handleNavClick("dashboard")}
-          >
+          <NavLink to="/dashboard" className={linkClass}>
             Dashboard
-          </button>
+          </NavLink>
 
-          <button
-            className={activePage === "ppt" ? "nav-link nav-link-active" : "nav-link"}
-            onClick={() => handleNavClick("ppt")}
-          >
+          <NavLink to="/ppt" className={linkClass}>
             PPT Generator
-          </button>
+          </NavLink>
 
-          <button
-            className={activePage === "word" ? "nav-link nav-link-active" : "nav-link"}
-            onClick={() => handleNavClick("word")}
-          >
+          <NavLink to="/word" className={linkClass}>
             Word Generator
-          </button>
+          </NavLink>
         </div>
 
+        {/* RIGHT: User + Login/Logout */}
         <div className="nav-right">
           <div className="nav-user-pill">
             <div className="nav-user-avatar">{initial}</div>
@@ -67,9 +53,9 @@ function Navbar({ activePage, onChangePage, user, onLogout }) {
           </div>
 
           {!isLoggedIn ? (
-            <button className="nav-login-btn" onClick={() => handleNavClick("login")}>
+            <NavLink to="/login" className="nav-login-btn">
               Login
-            </button>
+            </NavLink>
           ) : (
             <button className="nav-login-btn" onClick={onLogout}>
               Logout
