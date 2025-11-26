@@ -1,6 +1,7 @@
-// frontend/ai-doc-frontend/src/config.js
+// src/config.js
 
-export const API_BASE_URL =
+// ✅ Single source of truth for backend URL
+export const BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "https://ai-doc-backend-hecs.onrender.com/api/v1";
 
