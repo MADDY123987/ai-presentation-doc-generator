@@ -1,9 +1,11 @@
 // src/components/dashboard/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import "./dashboard.css";
+import { BASE_URL } from "../../config";
 
-const API_BASE = "http://127.0.0.1:8000/api/v1"; // adjust if needed
-const API_HOST = API_BASE.replace("/api/v1", ""); // e.g. http://127.0.0.1:8000
+// Use Render backend everywhere (no localhost)
+const API_BASE = `${BASE_URL}/api/v1`;
+const API_HOST = BASE_URL;
 
 function Dashboard({ user }) {
   const [loading, setLoading] = useState(true);
@@ -18,7 +20,7 @@ function Dashboard({ user }) {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  // ---------- NEW: secure download helper (uses auth token) ----------
+  // ---------- secure download helper (uses auth token) ----------
   const handleDownload = async (url, filenameFallback = "file") => {
     try {
       const headers = getAuthHeaders();
@@ -104,34 +106,23 @@ function Dashboard({ user }) {
         if (first) {
           if (typeof first === "string" && first.trim()) {
             const s = first.trim();
-            return s.length > MAX_CHARS
-              ? s.slice(0, MAX_CHARS) + "…"
-              : s;
+            return s.length > MAX_CHARS ? s.slice(0, MAX_CHARS) + "…" : s;
           }
           if (typeof first === "object") {
-            const t = (first.title || first.heading || "")
-              .toString()
-              .trim();
+            const t = (first.title || first.heading || "").toString().trim();
             if (t)
-              return t.length > MAX_CHARS
-                ? t.slice(0, MAX_CHARS) + "…"
-                : t;
-            const bullets =
-              first.bullets || first.points || first.body || [];
+              return t.length > MAX_CHARS ? t.slice(0, MAX_CHARS) + "…" : t;
+            const bullets = first.bullets || first.points || first.body || [];
             if (Array.isArray(bullets) && bullets.length > 0) {
               const b0 = String(bullets[0]).trim();
               if (b0)
-                return b0.length > MAX_CHARS
-                  ? b0.slice(0, MAX_CHARS) + "…"
-                  : b0;
+                return b0.length > MAX_CHARS ? b0.slice(0, MAX_CHARS) + "…" : b0;
             }
             const textFields = ["description", "text", "content", "summary"];
             for (const k of textFields) {
               if (first[k] && String(first[k]).trim()) {
                 const s = String(first[k]).trim();
-                return s.length > MAX_CHARS
-                  ? s.slice(0, MAX_CHARS) + "…"
-                  : s;
+                return s.length > MAX_CHARS ? s.slice(0, MAX_CHARS) + "…" : s;
               }
             }
           }
@@ -226,9 +217,7 @@ function Dashboard({ user }) {
             setModalContent({
               title: data.title || item.title || `Document ${item.id}`,
               body:
-                data.content ||
-                data.body ||
-                JSON.stringify(data, null, 2),
+                data.content || data.body || JSON.stringify(data, null, 2),
             });
           }
         }
@@ -296,8 +285,8 @@ function Dashboard({ user }) {
         <div className="dashboard-empty">
           <p>No projects yet.</p>
           <p className="dashboard-empty-sub">
-            Generate your first PPT or Word document from the top
-            navigation, and it will appear here automatically.
+            Generate your first PPT or Word document from the top navigation,
+            and it will appear here automatically.
           </p>
         </div>
       )}
@@ -330,9 +319,7 @@ function Dashboard({ user }) {
                     <article className="dashboard-card" key={p.id}>
                       <div className="dashboard-card-top">
                         <span className="dashboard-type-pill">PPT</span>
-                        <span className="dashboard-type">
-                          Presentation
-                        </span>
+                        <span className="dashboard-type">Presentation</span>
                       </div>
 
                       <h3 className="dashboard-card-title">
@@ -356,9 +343,7 @@ function Dashboard({ user }) {
                       >
                         <button
                           className="dashboard-open-btn"
-                          onClick={() =>
-                            openReadMore(p, "presentation")
-                          }
+                          onClick={() => openReadMore(p, "presentation")}
                         >
                           Read more
                         </button>
@@ -411,9 +396,7 @@ function Dashboard({ user }) {
                         <span className="dashboard-type-pill">
                           {(d.type || "DOC").toUpperCase()}
                         </span>
-                        <span className="dashboard-type">
-                          Document
-                        </span>
+                        <span className="dashboard-type">Document</span>
                       </div>
 
                       <h3 className="dashboard-card-title">
@@ -437,9 +420,7 @@ function Dashboard({ user }) {
                       >
                         <button
                           className="dashboard-open-btn"
-                          onClick={() =>
-                            openReadMore(d, "document")
-                          }
+                          onClick={() => openReadMore(d, "document")}
                         >
                           Read more
                         </button>
@@ -501,8 +482,7 @@ function Dashboard({ user }) {
                   fontSize: 14,
                 }}
               >
-                {modalContent.body ||
-                  "No additional content available."}
+                {modalContent.body || "No additional content available."}
               </pre>
             )}
           </div>
