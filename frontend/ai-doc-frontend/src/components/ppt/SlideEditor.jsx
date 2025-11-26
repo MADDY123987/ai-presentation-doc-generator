@@ -20,12 +20,6 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
   const [saving, setSaving] = useState(false);
   const [statusMsg, setStatusMsg] = useState("Saved");
 
-  // per-slide feedback state
-  const [reaction, setReaction] = useState(slide.reaction || null); // "like" | "dislike" | null
-  const [comment, setComment] = useState(slide.comment || "");
-  const [feedbackSaving, setFeedbackSaving] = useState(false);
-  const [feedbackStatus, setFeedbackStatus] = useState("Feedback not saved yet");
-
   const timerRef = useRef(null);
   const mounted = useRef(true);
 
@@ -45,13 +39,9 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
     setRight(slide.right || "");
     setImageUrl(slide.image_url || SAMPLE_IMAGE);
     setCaption(slide.caption || slide.description || "");
-
-    // sync feedback fields if backend sends them
-    setReaction(slide.reaction || null);
-    setComment(slide.comment || "");
   }, [slide]);
 
-  // Build minimal payload matching SlideUpdate schema
+  // Build minimal payload
   const buildPayload = () => {
     const payload = {};
     if (title !== (slide.title || "")) payload.title = title;
@@ -74,8 +64,6 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
       if (caption !== (slide.caption || slide.description || "")) {
         payload.caption = caption;
       }
-    } else {
-      // custom/title: title handled above
     }
 
     return payload;
@@ -142,63 +130,7 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
     await saveToBackend(payload);
   };
 
-  // feedback submit helper
-  const submitFeedback = async (nextReaction = reaction, nextComment = comment) => {
-    if (!presentationId) {
-      setFeedbackStatus("Feedback stored locally");
-      return;
-    }
-
-    try {
-      setFeedbackSaving(true);
-      setFeedbackStatus("Saving feedback…");
-
-      const token = localStorage.getItem("authToken");
-      const payload = {
-        reaction: nextReaction,
-        comment: nextComment,
-      };
-
-      await axios.post(
-        `${BASE_URL}/presentations/${presentationId}/slides/${index}/feedback`,
-        payload,
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        }
-      );
-
-      if (mounted.current) {
-        setFeedbackSaving(false);
-        setFeedbackStatus("Feedback saved");
-      }
-
-      if (onLocalChange) {
-        onLocalChange(index, {
-          ...slide,
-          reaction: nextReaction,
-          comment: nextComment,
-        });
-      }
-    } catch (err) {
-      console.error("Saving feedback failed:", err);
-      if (mounted.current) {
-        setFeedbackSaving(false);
-        setFeedbackStatus("Error saving feedback");
-      }
-    }
-  };
-
-  const handleReactionClick = (type) => {
-    const next = reaction === type ? null : type;
-    setReaction(next);
-    submitFeedback(next, comment);
-  };
-
-  const handleCommentBlur = () => {
-    submitFeedback(reaction, comment);
-  };
-
-  // Handlers when editing the preview (contentEditable elements)
+  // contentEditable handlers
   const onTitleInput = (e) => {
     const v = e.currentTarget.innerText.replace(/\u00A0/g, " ");
     setTitle(v);
@@ -380,6 +312,7 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
         </div>
       </div>
 
+      {/* fallback controls hidden visually */}
       <div className="slide-hidden-controls" aria-hidden="true">
         <label>
           <span>Bullets (fallback)</span>
@@ -424,44 +357,8 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
         </label>
       </div>
 
-      {/* FOOTER: small feedback + save slide */}
+      {/* SIMPLE FOOTER: only save status + button */}
       <div className="slide-card-footer">
-        <div className="slide-feedback-row">
-          <div className="feedback-buttons">
-            <button
-              type="button"
-              className={
-                reaction === "like" ? "feedback-btn active" : "feedback-btn"
-              }
-              onClick={() => handleReactionClick("like")}
-              disabled={feedbackSaving}
-            >
-              👍
-            </button>
-            <button
-              type="button"
-              className={
-                reaction === "dislike" ? "feedback-btn active" : "feedback-btn"
-              }
-              onClick={() => handleReactionClick("dislike")}
-              disabled={feedbackSaving}
-            >
-              👎
-            </button>
-          </div>
-
-          <textarea
-            className="feedback-comment-input"
-            placeholder="Note…"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            onBlur={handleCommentBlur}
-            rows={1}
-          />
-
-          <span className="feedback-status">{feedbackStatus}</span>
-        </div>
-
         <div className="slide-footer-actions">
           <div className="save-status" aria-hidden>
             {statusMsg}
