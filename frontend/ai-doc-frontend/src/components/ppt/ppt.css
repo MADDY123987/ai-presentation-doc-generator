@@ -17,12 +17,14 @@
 
 /* ========== PAGE LAYOUT ========== */
 
+/* Expand full usable width */
 .ppt-page {
-  margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 30px;
 }
+
 
 /* ========== HERO SECTION (TOP) ========== */
 
@@ -608,10 +610,11 @@
 
 /* grid layout for slide cards */
 .ppt-page .slides-list {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  padding-bottom: 40px;
 }
 
 
