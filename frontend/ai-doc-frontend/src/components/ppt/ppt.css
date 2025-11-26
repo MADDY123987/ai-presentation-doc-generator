@@ -606,25 +606,48 @@
   box-shadow: 0 8px 16px rgba(0,0,0,0.45);
 }
 
-
 /* =========================================================
-   REVIEW & EDIT SLIDES GRID (ONLY LAYOUT HERE)
+   REVIEW & EDIT SLIDES – MINI FEEDBACK CONTROLS
+   (only on PPT page; overrides slide-editor.css)
    ======================================================= */
 
-/* Grid for the Review & Edit slides section */
-/* REVIEW & EDIT SLIDES GRID – EXACTLY 2 PER ROW */
-.ppt-page .slides-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));  /* 🔥 only 2 */
-  gap: 24px;
-  align-items: stretch;
-  padding: 8px 4px 32px;
+.ppt-page .slide-card-footer {
+  margin-top: 0.4rem;
 }
 
-/* On smaller screens → 1 per row */
-@media (max-width: 900px) {
-  .ppt-page .slides-list {
-    grid-template-columns: minmax(0, 1fr);
-  }
+/* shrink whole feedback row */
+.ppt-page .slide-feedback-row {
+  padding: 2px 4px;
+  border-radius: 999px;
+  transform: scale(0.8);
+  transform-origin: left center;
 }
 
+/* smaller like / dislike buttons */
+.ppt-page .feedback-btn {
+  font-size: 0.55rem;
+  padding: 1px 4px;
+  min-width: 0;
+}
+
+/* tiny comment chip */
+.ppt-page .feedback-comment-input {
+  max-width: 110px;
+  font-size: 0.65rem;
+  padding: 0 0.3rem;
+}
+
+/* hide long status text, show only short word */
+.ppt-page .feedback-status {
+  font-size: 0.6rem;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* keep save button normal but slightly tighter */
+.ppt-page .slide-save-btn {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+}
