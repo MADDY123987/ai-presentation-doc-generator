@@ -1,7 +1,11 @@
 // src/components/auth/OAuthComplete.jsx
 import { useEffect } from "react";
+import { BASE_URL } from "../../config";   // ✅ import shared base URL
 
-const API_BASE = "http://127.0.0.1:8000";
+// BASE_URL already has: https://ai-doc-backend-hecs.onrender.com/api/v1
+// We just drop the /api/v1 part if your /users/me is not versioned.
+// If your FastAPI route is /api/v1/users/me, this is perfect.
+const API_BASE = BASE_URL;
 
 function OAuthComplete({ onLogin }) {
   useEffect(() => {
@@ -15,10 +19,10 @@ function OAuthComplete({ onLogin }) {
 
     (async () => {
       try {
-        // save token
+        // save token so PPT / Word generator can use it
         localStorage.setItem("authToken", token);
 
-        // get user profile
+        // fetch profile from the SAME backend
         const meRes = await fetch(`${API_BASE}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -33,7 +37,7 @@ function OAuthComplete({ onLogin }) {
 
         if (onLogin) onLogin(me);
 
-        // go to home (or dashboard)
+        // go to home
         window.location.href = "/";
       } catch (err) {
         console.error(err);
