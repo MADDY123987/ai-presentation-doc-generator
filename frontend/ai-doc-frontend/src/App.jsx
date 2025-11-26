@@ -11,7 +11,7 @@ import WordGenerator from "./components/word/WordGenerator.jsx";
 import AuthPage from "./components/auth/AuthPage.jsx";
 import Dashboard from "./components/dashboard/Dashboard.jsx";
 
-const API_BASE = "http://127.0.0.1:8000/api/v1"; // ✅ with /api/v1
+const API_BASE = "http://127.0.0.1:8000/api/v1"; // local backend
 
 function App() {
   const [activePage, setActivePage] = useState("home");
@@ -21,7 +21,6 @@ function App() {
     const handleStartup = async () => {
       const { pathname, search } = window.location;
 
-      // 🔁 Handle Google/GitHub OAuth redirect here
       if (pathname === "/oauth-complete") {
         const params = new URLSearchParams(search);
         const accessTokenFromQuery = params.get("access_token");
@@ -32,10 +31,8 @@ function App() {
           let token = null;
 
           if (accessTokenFromQuery) {
-            // Case 1: backend already gave us access_token in URL
             token = accessTokenFromQuery;
           } else if (code && state) {
-            // Case 2: provider returned code+state (your case now)
             const provider =
               sessionStorage.getItem("oauth_provider") || "google";
 
@@ -47,30 +44,23 @@ function App() {
             });
 
             const data = await res.json();
-            if (!res.ok) {
-              throw new Error(data.detail || "OAuth callback failed");
-            }
+            if (!res.ok) throw new Error(data.detail || "OAuth failed");
 
             token = data.access_token;
           } else {
-            throw new Error("Invalid OAuth redirect parameters");
+            throw new Error("Invalid OAuth redirect");
           }
 
-          if (!token) {
-            throw new Error("No access token from OAuth");
-          }
+          if (!token) throw new Error("Token missing");
 
-          // Save token
           localStorage.setItem("authToken", token);
 
-          // Load user profile
           const meRes = await fetch(`${API_BASE}/users/me`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+
           const me = await meRes.json();
-          if (!meRes.ok) {
-            throw new Error(me.detail || "Failed to load user after OAuth");
-          }
+          if (!meRes.ok) throw new Error("Load profile failed");
 
           localStorage.setItem("authUser", JSON.stringify(me));
           localStorage.setItem("authEmail", me.email || "");
@@ -78,26 +68,17 @@ function App() {
           setCurrentUser(me);
           setActivePage("home");
 
-          // Clean URL
           window.history.replaceState({}, "", "/");
-        } catch (e) {
-          console.error("OAuth complete error:", e);
-          alert("Social login failed. Please try again or use email/password.");
+        } catch {
+          alert("Social login failed");
           window.history.replaceState({}, "", "/");
         }
 
-        return; // don't run normal startup
+        return;
       }
 
-      // Normal startup: restore user from localStorage
       const storedUser = localStorage.getItem("authUser");
-      if (storedUser) {
-        try {
-          setCurrentUser(JSON.parse(storedUser));
-        } catch (e) {
-          console.error("Failed to parse authUser from localStorage", e);
-        }
-      }
+      if (storedUser) setCurrentUser(JSON.parse(storedUser));
     };
 
     handleStartup();
@@ -121,6 +102,12 @@ function App() {
     changePage("home");
   };
 
+  // 👇 Dashboard tells App: "User clicked + New Project"
+  const handleCreateProject = (kind) => {
+    if (kind === "ppt") changePage("ppt");
+    else changePage("word");
+  };
+
   return (
     <div className="app">
       <Navbar
@@ -132,6 +119,7 @@ function App() {
 
       <main className="main">
         <div className="page-container">
+
           {activePage === "home" && (
             <Home
               onStartPpt={() => changePage("ppt")}
@@ -150,23 +138,15 @@ function App() {
               <WordGenerator />
             </section>
           )}
-          {activePage === "dashboard" && (
-  <section className="page page-narrow">
-    <Dashboard
-      user={currentUser}
-      onCreateProject={(kind) => {
-        if (kind === "ppt") {
-          setActivePage("ppt");
-        } else {
-          setActivePage("word");
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }}
-    />
-  </section>
-)}
 
-         
+          {activePage === "dashboard" && (
+            <section className="page page-narrow">
+              <Dashboard
+                user={currentUser}
+                onCreateProject={handleCreateProject}
+              />
+            </section>
+          )}
 
           {activePage === "login" && (
             <section className="page">
