@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./dashboard.css";
 import { BASE_URL, AUTH_BASE_URL } from "../../config";
 
-// Use Render backend everywhere (no localhost)
-// BASE_URL already includes /api/v1
+// BASE_URL includes /api/v1
 const API_BASE = BASE_URL;
 const API_HOST = AUTH_BASE_URL;
 
@@ -22,23 +21,23 @@ function Dashboard({ user, onCreateProject }) {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  const handleDownload = async (url, filenameFallback = "file") => {
+  const handleDownload = async (url, filename = "file") => {
     try {
       const res = await fetch(url, { headers: getAuthHeaders() });
-      if (!res.ok) return alert(`Download failed: ${res.status}`);
+      if (!res.ok) return alert("Download failed: " + res.status);
 
       const blob = await res.blob();
       const a = document.createElement("a");
       a.href = window.URL.createObjectURL(blob);
-      a.download = filenameFallback;
+      a.download = filename;
       a.click();
     } catch (err) {
-      alert("Download error: " + (err.message || "Unknown error"));
+      alert("Download error: " + err.message);
     }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDashboard = async () => {
       try {
         const res = await fetch(`${API_BASE}/dashboard/items`, {
           headers: { Accept: "application/json", ...getAuthHeaders() },
@@ -46,43 +45,40 @@ function Dashboard({ user, onCreateProject }) {
 
         if (res.status === 404) {
           setItems(null);
-          setError("");
-        } else {
-          const data = await res.json();
-          if (!res.ok) {
-            setError(data.detail || "Backend error");
-            setItems(null);
-          } else {
-            setItems(data);
-            setError("");
-          }
+          return;
         }
-      } catch (err) {
-        setError(err.message || "Unknown error");
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Backend error");
+
+        setItems(data);
+        setError("");
+      } catch (e) {
+        setError(e.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchDashboard();
   }, [user]);
 
-  const formatDate = (date) =>
-    date ? new Date(date).toLocaleString() : "no date";
+  const formatDate = (d) =>
+    d ? new Date(d).toLocaleString() : "No date";
 
   const makePreviewText = (item) => {
-    const MAX = 160;
     const text =
       item.summary ||
       item.preview ||
-      (Array.isArray(item.content) ? item.content[0]?.title || "" : "") ||
       item.title ||
       item.topic ||
-      item.name;
-    return String(text).slice(0, MAX) + (String(text).length > MAX ? "…" : "");
+      item.name ||
+      "";
+    const trimmed = text.toString().trim();
+    return trimmed.length > 160 ? trimmed.slice(0, 160) + "…" : trimmed;
   };
 
-  const openReadMore = async (item, type = "presentation") => {
+  const openReadMore = async (item, type) => {
     setModalOpen(true);
     setModalLoading(true);
 
@@ -95,14 +91,17 @@ function Dashboard({ user, onCreateProject }) {
       const res = await fetch(endpoint, {
         headers: getAuthHeaders(),
       });
-      const data = await res.json();
 
+      const data = await res.json();
       setModalContent({
         title: data.title || data.topic || `${type} #${item.id}`,
         body: JSON.stringify(data, null, 2),
       });
     } catch {
-      setModalContent({ title: "Error", body: "Failed to load content." });
+      setModalContent({
+        title: "Error",
+        body: "Unable to load full content.",
+      });
     } finally {
       setModalLoading(false);
     }
@@ -110,7 +109,7 @@ function Dashboard({ user, onCreateProject }) {
 
   const handleCreate = (kind) => {
     setShowCreateMenu(false);
-    if (onCreateProject) onCreateProject(kind);
+    onCreateProject?.(kind);
   };
 
   const presentations = items?.presentations || [];
@@ -151,36 +150,34 @@ function Dashboard({ user, onCreateProject }) {
   if (error)
     return (
       <p className="dashboard-status dashboard-status-error">
-        Failed: {error}
+        {error}
       </p>
     );
 
   return (
     <div className="dashboard-page">
-      <header className="dashboard-header-main">
+      <div className="dashboard-header-main">
         <h1 className="dashboard-title-main">
           Welcome, {user?.email || "User"}
         </h1>
-
-        <button className="dashboard-new-btn" onClick={() => setShowCreateMenu((v) => !v)}>
+        <button
+          className="dashboard-new-btn"
+          onClick={() => setShowCreateMenu((v) => !v)}
+        >
           + New project
         </button>
 
         {showCreateMenu && (
           <div className="dashboard-new-menu">
-            <button onClick={() => handleCreate("ppt")}>
-              Create PPT presentation
-            </button>
-            <button onClick={() => handleCreate("doc")}>
-              Create Word document
-            </button>
+            <button onClick={() => handleCreate("ppt")}>📽️ PPT</button>
+            <button onClick={() => handleCreate("doc")}>📄 Word</button>
           </div>
         )}
-      </header>
+      </div>
 
       {projects.length === 0 ? (
         <div className="dashboard-empty-shell">
-          <p>You don't have projects yet.</p>
+          No projects yet — create one!
         </div>
       ) : (
         <section className="dashboard-projects">
@@ -191,37 +188,47 @@ function Dashboard({ user, onCreateProject }) {
             <span>Actions</span>
           </div>
 
-          <div className="dashboard-table-body">
-            {projects.map((proj) => (
-              <div className="dashboard-project-row" key={proj.id}>
-                <span>{proj.title}</span>
-                <span>{proj.kind}</span>
-                <span>{formatDate(proj.created_at)}</span>
-                <span>
-                  <button onClick={() => openReadMore(proj.raw, proj.kind === "PPT" ? "presentation" : "document")}>
-                    Open
+          {projects.map((p) => (
+            <div key={p.id} className="dashboard-project-row">
+              <span>{p.title}</span>
+              <span>{p.kind}</span>
+              <span>{formatDate(p.created_at)}</span>
+              <span>
+                <button
+                  onClick={() =>
+                    openReadMore(
+                      p.raw,
+                      p.kind === "PPT" ? "presentation" : "document"
+                    )
+                  }
+                >
+                  Open
+                </button>
+                {p.downloadUrl && (
+                  <button
+                    onClick={() =>
+                      handleDownload(p.downloadUrl, `${p.title}.${p.ext}`)
+                    }
+                  >
+                    Download
                   </button>
-                  {proj.downloadUrl && (
-                    <button
-                      onClick={() =>
-                        handleDownload(proj.downloadUrl, `${proj.title}.${proj.ext}`)
-                      }
-                    >
-                      Download
-                    </button>
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
+                )}
+              </span>
+            </div>
+          ))}
         </section>
       )}
 
       {modalOpen && (
-        <div className="dashboard-modal-overlay" onClick={() => setModalOpen(false)}>
-          <div className="dashboard-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="dashboard-modal-overlay"
+          onClick={() => setModalOpen(false)}
+        >
+          <div
+            className="dashboard-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3>{modalContent.title}</h3>
-            <pre style={{ whiteSpace: "pre-wrap", fontSize: 13 }}>
+            <pre className="dashboard-modal-body">
               {modalLoading ? "Loading…" : modalContent.body}
             </pre>
           </div>
