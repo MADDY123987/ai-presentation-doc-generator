@@ -1,10 +1,7 @@
-// src/components/auth/AuthPage.jsx
 import React, { useState } from "react";
 import "./AuthPage.css";
-import { BASE_URL } from "../../config";
 
-// Use deployed backend (Render), not localhost
-const API_BASE = BASE_URL;
+const API_BASE = "https://ai-doc-backend-hecs.onrender.com"; // Backend URL
 
 function AuthPage({ onBackHome, onLogin }) {
   const [mode, setMode] = useState("login");
@@ -19,7 +16,6 @@ function AuthPage({ onBackHome, onLogin }) {
 
     try {
       if (mode === "register") {
-        // ---------- REGISTER ----------
         const res = await fetch(`${API_BASE}/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -32,7 +28,6 @@ function AuthPage({ onBackHome, onLogin }) {
         alert("Registered! Now login.");
         setMode("login");
       } else {
-        // ---------- LOGIN ----------
         const form = new URLSearchParams();
         form.append("username", email);
         form.append("password", password);
@@ -66,8 +61,7 @@ function AuthPage({ onBackHome, onLogin }) {
         if (onBackHome) onBackHome();
       }
     } catch (err) {
-      console.error("Auth error:", err);
-      alert(err.message || "Unknown error");
+      alert(err.message);
     } finally {
       setLoading(false);
     }

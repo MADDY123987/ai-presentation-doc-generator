@@ -1,6 +1,5 @@
 export const BASE_URL = "https://ai-doc-backend-hecs.onrender.com";
 
-
 export const PPT_THEMES = {
   "Bright Orange Modern": {
     theme_id: "ppt1",
