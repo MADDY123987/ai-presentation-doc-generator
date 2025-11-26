@@ -88,7 +88,9 @@ function PptGenerator() {
       const pres = res.data;
       if (pres?.content && Array.isArray(pres.content)) {
         pres.content = pres.content.map((s) =>
-          s.layout === "image" && !s.image_url ? { ...s, image_url: SAMPLE_IMAGE_PATH } : s
+          s.layout === "image" && !s.image_url
+            ? { ...s, image_url: SAMPLE_IMAGE_PATH }
+            : s
         );
       }
       setPresentation(pres);
@@ -96,7 +98,8 @@ function PptGenerator() {
     } catch (err) {
       console.error(err);
       setError(
-        (err.response && err.response.data) || "Error generating slides. Check backend logs."
+        (err.response && err.response.data) ||
+          "Error generating slides. Check backend logs."
       );
       setMode("editing");
     } finally {
@@ -104,29 +107,44 @@ function PptGenerator() {
     }
   };
 
-  // Manual save handler (keeps behavior for buttons / existing API)
+  // === Manual save handler: now merges existing slide + updatedSlide
+  //     so comment (and any other fields) are always included.
   const handleSaveSlide = async (idx, updatedSlide) => {
     if (!presentationId) return;
+
     try {
       setLoading(true);
+
+      // take the current slide from state (includes comment, layout, etc.)
+      const currentSlide =
+        presentation?.content && presentation.content[idx]
+          ? presentation.content[idx]
+          : {};
+
+      // merge in the updated fields from SlideEditor (including comment)
+      const payload = {
+        ...currentSlide,
+        ...updatedSlide,
+      };
+
       await axios.put(
         `${BASE_URL}/presentations/${presentationId}/slides/${idx}`,
-        updatedSlide,
+        payload,
         { headers: getAuthHeaders() }
       );
+
       // refresh the presentation after save so server + client are consistent
       const res = await axios.get(
         `${BASE_URL}/presentations/${presentationId}`,
         { headers: getAuthHeaders() }
       );
       setPresentation(res.data);
+
       // small non-blocking confirmation
       try {
-        // prefer a gentle UI confirmation instead of alert; keep alert as fallback
         if (window?.toastr && typeof window.toastr.success === "function") {
           window.toastr.success(`Slide ${idx + 1} updated!`);
         } else {
-          // fallback quick alert
           // eslint-disable-next-line no-alert
           alert(`Slide ${idx + 1} updated!`);
         }
@@ -240,7 +258,9 @@ function PptGenerator() {
 
           {/* Big prompt box */}
           <div className="ppt-hero-prompt">
-            <label className="ppt-hero-label">Describe what you want for your slides</label>
+            <label className="ppt-hero-label">
+              Describe what you want for your slides
+            </label>
 
             <textarea
               className="ppt-hero-textarea"
@@ -263,7 +283,9 @@ function PptGenerator() {
                     onChange={(e) => setNumSlides(e.target.value)}
                   />
                 </label>
-                <span className="ppt-hero-counter">{topic.length} characters</span>
+                <span className="ppt-hero-counter">
+                  {topic.length} characters
+                </span>
               </div>
 
               <div className="ppt-hero-footer-right">
@@ -284,7 +306,9 @@ function PptGenerator() {
                   onClick={handleGenerateSlides}
                   disabled={loading || mode === "generating"}
                 >
-                  {mode === "generating" ? "Generating..." : "Generate presentation"}
+                  {mode === "generating"
+                    ? "Generating..."
+                    : "Generate presentation"}
                 </button>
               </div>
             </div>
@@ -296,7 +320,9 @@ function PptGenerator() {
         <div className="ppt-hero-visual">
           <div className="ppt-hero-visual-card">
             <div className="ppt-hero-visual-icon">📽️</div>
-            <p className="ppt-hero-visual-text">Drop in your own hero illustration or screenshot here.</p>
+            <p className="ppt-hero-visual-text">
+              Drop in your own hero illustration or screenshot here.
+            </p>
           </div>
         </div>
       </section>
@@ -308,19 +334,25 @@ function PptGenerator() {
             <div className="ppt-fast-media">
               <div className="ppt-fast-card">
                 <div className="ppt-fast-icon">🖥️</div>
-                <p className="ppt-fast-card-text">Use this block for a hero screenshot or slide preview.</p>
+                <p className="ppt-fast-card-text">
+                  Use this block for a hero screenshot or slide preview.
+                </p>
               </div>
             </div>
 
             <div className="ppt-fast-copy">
               <h2>Create slide decks faster with AI</h2>
               <p>
-                Turn a single prompt into a full PPTX: slide titles, bullet points, and layouts ready to customise. Perfect for class decks,
+                Turn a single prompt into a full PPTX: slide titles, bullet
+                points, and layouts ready to customise. Perfect for class decks,
                 startup pitches and quick idea presentations.
               </p>
               <ul className="ppt-fast-list">
                 <li>Structured slide outline from one detailed prompt.</li>
-                <li>Clean layouts with space for charts, screenshots, and images you'll drop in later.</li>
+                <li>
+                  Clean layouts with space for charts, screenshots, and images
+                  you'll drop in later.
+                </li>
                 <li>Works with your own design themes and export-ready PPTX.</li>
               </ul>
             </div>
@@ -328,37 +360,54 @@ function PptGenerator() {
 
           <section className="ppt-steps">
             <h3>How the PPTX Studio works</h3>
-            <p className="ppt-steps-subtitle">Your slide workflow in a few clear steps.</p>
+            <p className="ppt-steps-subtitle">
+              Your slide workflow in a few clear steps.
+            </p>
 
             <div className="ppt-steps-grid">
               <div className="ppt-step-card">
                 <div className="ppt-step-number">1</div>
                 <h4>Describe your topic</h4>
-                <p>Type a detailed prompt and choose how many slides you need. The more context you give, the better the deck.</p>
+                <p>
+                  Type a detailed prompt and choose how many slides you need.
+                  The more context you give, the better the deck.
+                </p>
               </div>
 
               <div className="ppt-step-card">
                 <div className="ppt-step-number">2</div>
                 <h4>AI drafts the outline</h4>
-                <p>The agent creates slide titles and bullet points, turning your idea into a full deck structure automatically.</p>
+                <p>
+                  The agent creates slide titles and bullet points, turning your
+                  idea into a full deck structure automatically.
+                </p>
               </div>
 
               <div className="ppt-step-card">
                 <div className="ppt-step-number">3</div>
                 <h4>Review & edit slides</h4>
-                <p>Tweak wording, add notes, or remove slides. Each slide can be edited before you lock in the design.</p>
+                <p>
+                  Tweak wording, add notes, or remove slides. Each slide can be
+                  edited before you lock in the design.
+                </p>
               </div>
 
               <div className="ppt-step-card">
                 <div className="ppt-step-number">4</div>
                 <h4>Apply a design theme</h4>
-                <p>Pick one of your themes. Colors, fonts and layout tweaks are applied on the backend to style the whole deck.</p>
+                <p>
+                  Pick one of your themes. Colors, fonts and layout tweaks are
+                  applied on the backend to style the whole deck.
+                </p>
               </div>
 
               <div className="ppt-step-card">
                 <div className="ppt-step-number">5</div>
                 <h4>Export PPTX</h4>
-                <p>Download a ready-to-present PPTX file. Open it in PowerPoint or Google Slides and drop in final images or charts.</p>
+                <p>
+                  Download a ready-to-present PPTX file. Open it in PowerPoint
+                  or Google Slides and drop in final images or charts.
+                </p>
               </div>
             </div>
           </section>
@@ -369,7 +418,9 @@ function PptGenerator() {
       {mode === "generating" && (
         <div className="card ppt-step-card">
           <h3>2️⃣ Creating your presentation…</h3>
-          <p className="card-caption">Give it a moment while we turn your topic into a full slide deck.</p>
+          <p className="card-caption">
+            Give it a moment while we turn your topic into a full slide deck.
+          </p>
         </div>
       )}
 
@@ -379,7 +430,9 @@ function PptGenerator() {
           <div className="card ppt-step-card">
             <h3>2️⃣ Review & Edit Slides</h3>
             <p className="meta-line">
-              <strong>Presentation ID:</strong> {presentation.presentation_id} • <strong>Topic:</strong> {presentation.topic}
+              <strong>Presentation ID:</strong>{" "}
+              {presentation.presentation_id} • <strong>Topic:</strong>{" "}
+              {presentation.topic}
             </p>
 
             {loading && <p>Loading slides...</p>}
@@ -391,89 +444,113 @@ function PptGenerator() {
                   index={idx}
                   slide={slide}
                   presentationId={presentationId}
-                  onLocalChange={(i, updated) => handleLocalSlideChange(i, updated)}
+                  onLocalChange={(i, updated) =>
+                    handleLocalSlideChange(i, updated)
+                  }
                   onSave={(i, payload) => handleSaveSlide(i, payload)}
                 />
               ))}
             </div>
           </div>
 
-        {/* theme picker */}
-<div className="card ppt-step-card">
-  <h3>3️⃣ Pick PPT Design Theme</h3>
-  <p className="card-caption">
-    Apply one of your predefined themes. Backend will handle colors, fonts and layout tweaks.
-  </p>
+          {/* theme picker */}
+          <div className="card ppt-step-card">
+            <h3>3️⃣ Pick PPT Design Theme</h3>
+            <p className="card-caption">
+              Apply one of your predefined themes. Backend will handle colors,
+              fonts and layout tweaks.
+            </p>
 
-  {/* 🔍 DEBUG: show how many themes are loaded */}
-  <div style={{ color: "#cbd5e1", fontSize: 12, marginBottom: 4 }}>
-    Loaded themes: {Object.keys(PPT_THEMES).length}
-  </div>
+            <div
+              style={{ color: "#cbd5e1", fontSize: 12, marginBottom: 4 }}
+            >
+              Loaded themes: {Object.keys(PPT_THEMES).length}
+            </div>
 
-  <div className="field-grid" style={{ alignItems: "flex-start" }}>
-    {/* VISUAL THEME GRID */}
-    <div className="theme-picker-grid" role="list">
-      {Object.keys(PPT_THEMES).map((name) => {
-        const meta = PPT_THEMES[name];
-        return (
-          <button
-            key={name}
-            type="button"
-            className={`theme-thumb ${themeName === name ? "selected" : ""}`}
-            onClick={() => setThemeName(name)}
-            aria-pressed={themeName === name}
-            title={name}
-          >
-            <img
-              src={renderThumbSrc(meta)}
-              alt={`${name} preview`}
-              onError={onThumbError}
-              aria-hidden="false"
-            />
-            <div className="theme-thumb-label">{name}</div>
-          </button>
-        );
-      })}
-    </div>
+            <div className="field-grid" style={{ alignItems: "flex-start" }}>
+              {/* VISUAL THEME GRID */}
+              <div className="theme-picker-grid" role="list">
+                {Object.keys(PPT_THEMES).map((name) => {
+                  const meta = PPT_THEMES[name];
+                  return (
+                    <button
+                      key={name}
+                      type="button"
+                      className={`theme-thumb ${
+                        themeName === name ? "selected" : ""
+                      }`}
+                      onClick={() => setThemeName(name)}
+                      aria-pressed={themeName === name}
+                      title={name}
+                    >
+                      <img
+                        src={renderThumbSrc(meta)}
+                        alt={`${name} preview`}
+                        onError={onThumbError}
+                        aria-hidden="false"
+                      />
+                      <div className="theme-thumb-label">{name}</div>
+                    </button>
+                  );
+                })}
+              </div>
 
-    {/* larger preview */}
-    <div style={{ marginTop: 12 }}>
-      <div style={{ fontSize: 13, color: "#cbd5e1", marginBottom: 6 }}>
-        Selected theme preview
-      </div>
-      <div className="theme-preview-large">
-        <img
-          src={
-            (PPT_THEMES[themeName] &&
-              (PPT_THEMES[themeName].preview || PPT_THEMES[themeName].thumb)) ||
-            SAMPLE_IMAGE_PATH
-          }
-          alt="Selected theme preview"
-          onError={onThumbError}
-        />
-      </div>
-    </div>
-  </div>
+              {/* larger preview */}
+              <div style={{ marginTop: 12 }}>
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: "#cbd5e1",
+                    marginBottom: 6,
+                  }}
+                >
+                  Selected theme preview
+                </div>
+                <div className="theme-preview-large">
+                  <img
+                    src={
+                      (PPT_THEMES[themeName] &&
+                        (PPT_THEMES[themeName].preview ||
+                          PPT_THEMES[themeName].thumb)) ||
+                      SAMPLE_IMAGE_PATH
+                    }
+                    alt="Selected theme preview"
+                    onError={onThumbError}
+                  />
+                </div>
+              </div>
+            </div>
 
-  <button
-    className="secondary-action"
-    onClick={handleApplyTheme}
-    disabled={loading || !presentationId}
-    title={presentationId ? "Apply selected theme" : "Generate presentation first"}
-  >
-    {loading ? "Applying..." : "Apply Design Theme"}
-  </button>
-</div>
+            <button
+              className="secondary-action"
+              onClick={handleApplyTheme}
+              disabled={loading || !presentationId}
+              title={
+                presentationId
+                  ? "Apply selected theme"
+                  : "Generate presentation first"
+              }
+            >
+              {loading ? "Applying..." : "Apply Design Theme"}
+            </button>
+          </div>
 
           {/* export */}
           <div className="card ppt-step-card">
             <h3>4️⃣ Export </h3>
             {downloadUrl ? (
               <>
-                <button className="export-button" onClick={() => window.open(downloadUrl, "_blank")}>
+                <button
+                  className="export-button"
+                  onClick={() => window.open(downloadUrl, "_blank")}
+                >
                   ⬇️ Export PPTX
                 </button>
-                <button className="secondary-action" style={{ marginLeft: "8px" }} onClick={handleReset}>
+                <button
+                  className="secondary-action"
+                  style={{ marginLeft: "8px" }}
+                  onClick={handleReset}
+                >
                   🔄 Start over
                 </button>
               </>
