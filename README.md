@@ -1,67 +1,65 @@
-## 🚀 Deployment Guide
+# 🧠 AI Presentation & Document Generator
 
-### 🌐 Backend on Render
+Create professional PowerPoint presentations and Word-style documents—instantly—using AI!
 
-1. **Create a new Web Service** on [Render](https://render.com).
-   - **Root Directory:** `backend`
-   - **Build Command:**
-     ```bash
-     pip install -r requirements.txt
-     ```
-   - **Start Command:**
-     ```bash
-     uvicorn main:app --host 0.0.0.0 --port $PORT
-     ```
+Modern UI • Customizable • Secure Dashboard 🚀
 
-2. **Environment Variables** (add in Render dashboard):
-   | Key             | Value / Example                        |
-   |-----------------|----------------------------------------|
-   | `DATABASE_URL`  | `sqlite:///./ppt_generator.db` or PostgreSQL URL |
-   | `GEMINI_API_KEY`| Your production Gemini key             |
-   | `SECRET`        | Strong random JWT secret               |
-   | `FRONTEND_URL`  | Deployed frontend URL, e.g. `https://your-frontend.vercel.app` |
+## Project Guide
 
-3. **Copy the Render backend URL**, e.g.:
-   ```
-   https://your-backend.onrender.com
-   ```
+### Title
+AI Presentation & Document Generator
 
----
+### Description
+This project is designed to help users generate professional PowerPoint presentations and Word documents quickly and efficiently using AI technology. It provides an intuitive user interface that allows for customization to meet various presentation and document needs.
 
-### 💻 Frontend on Vercel
+### Features
+- Instant generation of presentations and documents
+- User-friendly interface
+- Customizable templates
+- Secure dashboard for document management
 
-1. In the root project **or** `frontend/ai-doc-frontend`, ensure code is pushed to GitHub.
-2. On [Vercel](https://vercel.com):
-   - **Import Project:** Select your repo via GitHub.
-   - **Root Directory:** `frontend/ai-doc-frontend`
-   - **Add Environment Variable:**
-     | Key               | Value                              |
-     |-------------------|------------------------------------|
-     | `VITE_API_BASE_URL` | `https://your-backend.onrender.com/api/v1` |
+### Tech Stack
+- Frontend: React.js
+- Backend: Node.js, Express
+- Database: MongoDB
+- AI Library: OpenAI API
 
-   - **Click Deploy.**  
-     Vercel will automatically use `npm install` and `npm run build` from your `package.json`.
+### Structure
+- `/client`: Contains the React frontend application.
+- `/server`: Contains the Node.js backend application.
+- `/models`: MongoDB models for data management.
 
----
+### Local Setup
+1. Clone the repository:
+   `git clone https://github.com/MADDY123987/AI-presentation-doc-generator.git`
 
-### 🧪 Quick Local Run Summary
+2. Navigate to the server directory:
+   `cd AI-presentation-doc-generator/server`
 
-**Backend**
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate        # or source venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
+3. Install dependencies:
+   `npm install`
 
-**Frontend**
-```bash
-cd ../frontend/ai-doc-frontend
-npm install
-npm run dev
-```
+4. Navigate to the client directory:
+   `cd ../client`
 
----
+5. Install client dependencies:
+   `npm install`
 
-You’re done – backend + frontend + `.env` + deployment!
+6. Start the server:
+   `npm start`
+
+7. Start the client:
+   `npm start`
+
+### API Endpoints
+- `GET /api/presentations`: Fetch all presentations.
+- `POST /api/presentations`: Create a new presentation.
+
+### Ready to Go
+Once the application is running, you can navigate to `http://localhost:3000` to access the dashboard. Here, you can create and manage your presentations and documents.
+
+### Help
+For any issues or questions, please refer to the FAQ section in the documentation or reach out via GitHub Issues.
+
+## Deployment Guide
+[Existing Deployment Guide content here...]
