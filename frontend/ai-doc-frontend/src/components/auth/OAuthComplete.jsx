@@ -1,6 +1,6 @@
 // src/components/auth/OAuthComplete.jsx
 import { useEffect } from "react";
-import { BASE_URL } from "../../config";
+import { AUTH_BASE_URL } from "../../config";
 
 function OAuthComplete({ onLogin }) {
   useEffect(() => {
@@ -16,7 +16,7 @@ function OAuthComplete({ onLogin }) {
       try {
         localStorage.setItem("authToken", token);
 
-        const meRes = await fetch(`${BASE_URL}/users/me`, {
+        const meRes = await fetch(`${AUTH_BASE_URL}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const me = await meRes.json();
