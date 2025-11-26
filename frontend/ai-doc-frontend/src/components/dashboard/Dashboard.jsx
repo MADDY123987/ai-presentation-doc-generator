@@ -51,19 +51,26 @@ function Dashboard({ user }) {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const headers = {
-        Accept: "application/json",
-        ...getAuthHeaders(),
-      };
+ useEffect(() => {
+  const fetchData = async () => {
+    const headers = {
+      Accept: "application/json",
+      ...getAuthHeaders(),
+    };
 
-      try {
-        const res = await fetch(`${API_BASE}/dashboard/items`, {
-          headers,
-        });
+    try {
+      const res = await fetch(`${API_BASE}/dashboard/items`, {
+        headers,
+      });
 
+      // Handle fresh dashboard: 404 means no data created yet
+      if (res.status === 404) {
+        console.log("Dashboard: No items found yet (404)");
+        setItems(null); // triggers empty state UI
+        setError("");   // no red error message
+      } else {
         const data = await res.json();
+
         if (!res.ok) {
           console.error("Dashboard API error:", res.status, data);
           setError(
@@ -72,17 +79,19 @@ function Dashboard({ user }) {
           setItems(null);
         } else {
           setItems(data);
+          setError(""); // ensure no leftover error shows
         }
-      } catch (err) {
-        console.error("Dashboard fetch failed:", err);
-        setError(err.message || "Unknown error");
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error("Dashboard fetch failed:", err);
+      setError(err.message || "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [user]);
+  fetchData();
+}, [user]);
 
   const formatDate = (value) => {
     if (!value) return "no date";
