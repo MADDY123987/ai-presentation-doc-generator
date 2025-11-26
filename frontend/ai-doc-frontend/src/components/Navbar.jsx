@@ -10,12 +10,9 @@ function Navbar({ activePage, onChangePage, user, onLogout }) {
 
   const isLoggedIn = !!user;
 
-  // 🔒 Simple route guard for protected pages
   const handleNavClick = (page) => {
     const protectedPages = ["dashboard", "ppt", "word"];
-
     if (!isLoggedIn && protectedPages.includes(page)) {
-      // If not logged in, always send to login
       onChangePage("login");
     } else {
       onChangePage(page);
@@ -25,7 +22,6 @@ function Navbar({ activePage, onChangePage, user, onLogout }) {
   return (
     <header className="navbar">
       <div className="navbar-inner">
-        {/* LEFT: Logo */}
         <div className="nav-left" onClick={() => handleNavClick("home")}>
           <div className="nav-logo-dot">PAI</div>
           <div className="nav-logo-text">
@@ -34,48 +30,36 @@ function Navbar({ activePage, onChangePage, user, onLogout }) {
           </div>
         </div>
 
-        {/* CENTER: Tabs — Home, Dashboard, PPT, Word */}
         <div className="nav-center">
           <button
-            className={
-              activePage === "home" ? "nav-link nav-link-active" : "nav-link"
-            }
+            className={activePage === "home" ? "nav-link nav-link-active" : "nav-link"}
             onClick={() => handleNavClick("home")}
           >
             Home
           </button>
 
           <button
-            className={
-              activePage === "dashboard"
-                ? "nav-link nav-link-active"
-                : "nav-link"
-            }
+            className={activePage === "dashboard" ? "nav-link nav-link-active" : "nav-link"}
             onClick={() => handleNavClick("dashboard")}
           >
             Dashboard
           </button>
 
           <button
-            className={
-              activePage === "ppt" ? "nav-link nav-link-active" : "nav-link"
-            }
+            className={activePage === "ppt" ? "nav-link nav-link-active" : "nav-link"}
             onClick={() => handleNavClick("ppt")}
           >
             PPT Generator
           </button>
 
           <button
-            className={
-              activePage === "word" ? "nav-link nav-link-active" : "nav-link"
-            }
+            className={activePage === "word" ? "nav-link nav-link-active" : "nav-link"}
             onClick={() => handleNavClick("word")}
           >
             Word Generator
           </button>
         </div>
 
-        {/* RIGHT: User + Login/Logout */}
         <div className="nav-right">
           <div className="nav-user-pill">
             <div className="nav-user-avatar">{initial}</div>
@@ -83,10 +67,7 @@ function Navbar({ activePage, onChangePage, user, onLogout }) {
           </div>
 
           {!isLoggedIn ? (
-            <button
-              className="nav-login-btn"
-              onClick={() => handleNavClick("login")}
-            >
+            <button className="nav-login-btn" onClick={() => handleNavClick("login")}>
               Login
             </button>
           ) : (
