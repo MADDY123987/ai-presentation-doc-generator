@@ -41,7 +41,7 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
     setCaption(slide.caption || slide.description || "");
   }, [slide]);
 
-  // Build minimal payload
+  // Build minimal payload matching SlideUpdate schema
   const buildPayload = () => {
     const payload = {};
     if (title !== (slide.title || "")) payload.title = title;
@@ -64,6 +64,8 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
       if (caption !== (slide.caption || slide.description || "")) {
         payload.caption = caption;
       }
+    } else {
+      // custom/title: title handled above
     }
 
     return payload;
@@ -130,7 +132,7 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
     await saveToBackend(payload);
   };
 
-  // contentEditable handlers
+  // Handlers when editing the preview (contentEditable elements)
   const onTitleInput = (e) => {
     const v = e.currentTarget.innerText.replace(/\u00A0/g, " ");
     setTitle(v);
@@ -312,7 +314,6 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
         </div>
       </div>
 
-      {/* fallback controls hidden visually */}
       <div className="slide-hidden-controls" aria-hidden="true">
         <label>
           <span>Bullets (fallback)</span>
@@ -357,7 +358,7 @@ function SlideEditor({ index, slide, presentationId, onLocalChange, onSave }) {
         </label>
       </div>
 
-      {/* SIMPLE FOOTER: only save status + button */}
+      {/* FOOTER: only save slide (feedback removed) */}
       <div className="slide-card-footer">
         <div className="slide-footer-actions">
           <div className="save-status" aria-hidden>

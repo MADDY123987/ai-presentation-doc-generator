@@ -276,6 +276,7 @@
     max-width: 100%;
   }
 }
+
 /* 🔪 Hide feedback bar completely (no thumbs, no comment box) */
 .slide-feedback-row {
   display: none !important;
