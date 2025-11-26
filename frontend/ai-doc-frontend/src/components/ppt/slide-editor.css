@@ -170,12 +170,7 @@
 }
 
 /* left side: like/dislike + comment */
-.slide-feedback-row {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+
 
 .feedback-buttons {
   display: flex;
@@ -223,31 +218,38 @@
   box-shadow: none;
   transform: none;
 }
+/* === Ultra-compact feedback layout === */
+
+.slide-feedback-row {
+  flex: 0;                            /* <- stops it from stretching tall */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;                           /* <- reduce spacing further */
+  padding: 4px 6px;                   /* <- tighter padding */
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
 
 /* smaller comment box */
 .feedback-comment-input {
   width: 100%;
-  min-height: 26px;
-  max-height: 40px;
-  padding: 4px 6px;
-  border-radius: 8px;
+  min-height: 32px;                   /* <- smaller */
+  max-height: 50px;                   /* <- prevents growing */
+  padding: 2px 4px;                   /* <- reduced padding */
+  border-radius: 6px;                 /* <- smaller radius */
   resize: vertical;
-  font-size: 0.78rem;
+  font-size: 0.70rem;                 /* <- text smaller */
   font-family: inherit;
 
   background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(148, 163, 184, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.4);
   color: #e5e7eb;
 }
 
 .feedback-comment-input::placeholder {
-  color: #6b7280;
-}
-
-.feedback-comment-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.7);
+  font-size: 0.68rem;
+  color: #64748b;
 }
 
 /* tiny status text */
