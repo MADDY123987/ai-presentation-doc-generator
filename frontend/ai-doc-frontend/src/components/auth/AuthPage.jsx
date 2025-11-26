@@ -1,7 +1,7 @@
+// src/components/auth/AuthPage.jsx
 import React, { useState } from "react";
 import "./AuthPage.css";
-
-const API_BASE = "https://ai-doc-backend-hecs.onrender.com"; // Backend URL
+import { BASE_URL } from "../../config";   // ✅ use the same BASE_URL
 
 function AuthPage({ onBackHome, onLogin }) {
   const [mode, setMode] = useState("login");
@@ -16,7 +16,7 @@ function AuthPage({ onBackHome, onLogin }) {
 
     try {
       if (mode === "register") {
-        const res = await fetch(`${API_BASE}/auth/register`, {
+        const res = await fetch(`${BASE_URL}/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -32,7 +32,7 @@ function AuthPage({ onBackHome, onLogin }) {
         form.append("username", email);
         form.append("password", password);
 
-        const res = await fetch(`${API_BASE}/auth/jwt/login`, {
+        const res = await fetch(`${BASE_URL}/auth/jwt/login`, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: form.toString(),
@@ -44,10 +44,12 @@ function AuthPage({ onBackHome, onLogin }) {
         const token = data.access_token;
         if (!token) throw new Error("No access token received");
 
+        // 🔐 store token for PPT/Word generators
         localStorage.setItem("authToken", token);
         localStorage.setItem("authEmail", email);
 
-        const meRes = await fetch(`${API_BASE}/users/me`, {
+        // load profile from the SAME backend
+        const meRes = await fetch(`${BASE_URL}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -85,17 +87,13 @@ function AuthPage({ onBackHome, onLogin }) {
 
         <div className="auth-page-tabs">
           <button
-            className={
-              mode === "login" ? "auth-page-tab active" : "auth-page-tab"
-            }
+            className={mode === "login" ? "auth-page-tab active" : "auth-page-tab"}
             onClick={() => setMode("login")}
           >
             Login
           </button>
           <button
-            className={
-              mode === "register" ? "auth-page-tab active" : "auth-page-tab"
-            }
+            className={mode === "register" ? "auth-page-tab active" : "auth-page-tab"}
             onClick={() => setMode("register")}
           >
             Register
