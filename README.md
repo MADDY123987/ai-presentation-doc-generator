@@ -26,9 +26,7 @@ Modern UI • Customizable • Secure Dashboard 🚀
   - Secure JWT email/password login  
   - View/download your history anytime  
   - Personal dashboard: only your files
-
 ---
-
 ## 🏗️ Tech Stack
 
 | Layer     | Technology                            |
@@ -40,11 +38,8 @@ Modern UI • Customizable • Secure Dashboard 🚀
 | Database  | SQLite (demo default)                 |
 | Files     | python-pptx, xlsxwriter               |
 | Deploy    | Render (backend), Vercel (frontend)   |
-
 ---
-
 ## 📂 Project Structure
-
 ```
 ai-presentation-doc-generator/
 ├── backend/
@@ -64,25 +59,19 @@ ai-presentation-doc-generator/
     ├── vite.config.js
     └── .env                   # Frontend config (NOT committed)
 ```
-
 ---
-
 ## ⚙️ Quick Start: Local Setup
 
-> **Prerequisites:**  
+> **Prerequisites:** 
 > - Python 3.12+  
 > - Node.js 18+ and npm  
 > - Google Gemini API key
-
 ### 1️⃣ Clone & Enter Project
-
 ```bash
 git clone https://github.com/<your-username>/ai-presentation-doc-generator.git
 cd ai-presentation-doc-generator
 ```
-
 ### 2️⃣ Install & Run Backend (FastAPI)
-
 ```bash
 cd backend
 python -m venv venv           # Create virtual environment
@@ -91,7 +80,6 @@ venv\Scripts\activate         # Windows
 
 pip install -r requirements.txt    # Install dependencies
 ```
-
 - **Config:** Create `backend/.env`
     ```
     DATABASE_URL=sqlite:///./ppt_generator.db
@@ -99,35 +87,28 @@ pip install -r requirements.txt    # Install dependencies
     SECRET=your_jwt_secret_here
     FRONTEND_URL=http://localhost:3000
     ```
-
 - **Start Backend:**
     ```bash
     uvicorn main:app --reload
     ```
     [http://127.0.0.1:8000](http://127.0.0.1:8000) (Swagger: `/api/v1/docs`)
-
 ---
-
 ### 3️⃣ Install & Run Frontend (React + Vite)
-
 ```bash
 cd ../frontend/ai-doc-frontend
 npm install
 ```
-
 - **Config:** Create `frontend/ai-doc-frontend/.env`
     ```
     VITE_API_BASE_URL=http://127.0.0.1:8000/api/v1
     ```
-
 - **Start Frontend:**
     ```bash
     npm run dev
     ```
     Visit: [http://localhost:3000](http://localhost:3000)
 
----
-
+--
 ## 🔌 Core API Endpoints
 
 | Method | Endpoint                              | Description                      |
@@ -143,12 +124,71 @@ npm install
 | GET    | `/users/me`                           | Get your profile                 |
 
 ---
-
 ## 🚀 Ready to Go!
-
 Once both backend and frontend are running, use the dashboard at [http://localhost:3000](http://localhost:3000) to generate, customize, and download your AI-powered documents and presentations.
+---
+**Need help?**  
+Check the Swagger docs: [http://127.0.0.1:8000/api/v1/docs](http://127.0.0.1:8000/api/v1/docs)
+
+## 🚀 Deployment Guide
+### 🌐 Backend on Render
+
+1. **Create a new Web Service** on [Render](https://render.com).
+   - **Root Directory:** `backend`
+   - **Build Command:**
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - **Start Command:**
+     ```bash
+     uvicorn main:app --host 0.0.0.0 --port $PORT
+     ```
+2. **Environment Variables** (add in Render dashboard):
+   | Key             | Value / Example                        |
+   |-----------------|----------------------------------------|
+   | `DATABASE_URL`  | `sqlite:///./ppt_generator.db` or PostgreSQL URL |
+   | `GEMINI_API_KEY`| Your production Gemini key             |
+   | `SECRET`        | Strong random JWT secret               |
+   | `FRONTEND_URL`  | Deployed frontend URL, e.g. `https://your-frontend.vercel.app` |
+
+3. **Copy the Render backend URL**, e.g.:
+   ```
+   https://your-backend.onrender.com
+   ```
+---
+
+### 💻 Frontend on Vercel
+
+1. In the root project **or** `frontend/ai-doc-frontend`, ensure code is pushed to GitHub.
+2. On [Vercel](https://vercel.com):
+   - **Import Project:** Select your repo via GitHub.
+   - **Root Directory:** `frontend/ai-doc-frontend`
+   - **Add Environment Variable:**
+     | Key               | Value                              |
+     |-------------------|------------------------------------|
+     | `VITE_API_BASE_URL` | `https://your-backend.onrender.com/api/v1` |
+
+   - **Click Deploy.**  
+     Vercel will automatically use `npm install` and `npm run build` from your `package.json`.
 
 ---
 
-**Need help?**  
-Check the Swagger docs: [http://127.0.0.1:8000/api/v1/docs](http://127.0.0.1:8000/api/v1/docs)
+### 🧪 Quick Local Run Summary
+
+**Backend**
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate        # or source venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+**Frontend**
+```bash
+cd ../frontend/ai-doc-frontend
+npm install
+npm run dev
+```
+---
+You’re done – backend + frontend + `.env` + deployment!
