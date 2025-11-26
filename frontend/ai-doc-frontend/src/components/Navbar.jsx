@@ -1,8 +1,7 @@
 // src/components/Navbar.jsx
 import React from "react";
-import { NavLink } from "react-router-dom";
 
-function Navbar({ user, onLogout }) {
+function Navbar({ activePage, onChangePage, user, onLogout }) {
   const displayName = user?.name || user?.email || "Guest";
   const initial =
     (user?.name && user.name[0]) ||
@@ -11,41 +10,66 @@ function Navbar({ user, onLogout }) {
 
   const isLoggedIn = !!user;
 
-  const linkClass = ({ isActive }) =>
-    isActive ? "nav-link nav-link-active" : "nav-link";
+  const handleNavClick = (page) => {
+    const protectedPages = ["dashboard", "ppt", "word"];
+    if (!isLoggedIn && protectedPages.includes(page)) {
+      onChangePage("login");
+    } else {
+      onChangePage(page);
+    }
+  };
 
   return (
     <header className="navbar">
       <div className="navbar-inner">
-        {/* LEFT: Logo → Home */}
-        <NavLink to="/" className="nav-left">
+        <div className="nav-left" onClick={() => handleNavClick("home")}>
           <div className="nav-logo-dot">PAI</div>
           <div className="nav-logo-text">
             <span>Presentations AI</span>
             <small>Docs & Slides Studio</small>
           </div>
-        </NavLink>
-
-        {/* CENTER: Tabs — use NavLink so Router controls active state */}
-        <div className="nav-center">
-          <NavLink to="/" className={linkClass} end>
-            Home
-          </NavLink>
-
-          <NavLink to="/dashboard" className={linkClass}>
-            Dashboard
-          </NavLink>
-
-          <NavLink to="/ppt" className={linkClass}>
-            PPT Generator
-          </NavLink>
-
-          <NavLink to="/word" className={linkClass}>
-            Word Generator
-          </NavLink>
         </div>
 
-        {/* RIGHT: User + Login/Logout */}
+        <div className="nav-center">
+          <button
+            className={
+              activePage === "home" ? "nav-link nav-link-active" : "nav-link"
+            }
+            onClick={() => handleNavClick("home")}
+          >
+            Home
+          </button>
+
+          <button
+            className={
+              activePage === "dashboard"
+                ? "nav-link nav-link-active"
+                : "nav-link"
+            }
+            onClick={() => handleNavClick("dashboard")}
+          >
+            Dashboard
+          </button>
+
+          <button
+            className={
+              activePage === "ppt" ? "nav-link nav-link-active" : "nav-link"
+            }
+            onClick={() => handleNavClick("ppt")}
+          >
+            PPT Generator
+          </button>
+
+          <button
+            className={
+              activePage === "word" ? "nav-link nav-link-active" : "nav-link"
+            }
+            onClick={() => handleNavClick("word")}
+          >
+            Word Generator
+          </button>
+        </div>
+
         <div className="nav-right">
           <div className="nav-user-pill">
             <div className="nav-user-avatar">{initial}</div>
@@ -53,9 +77,12 @@ function Navbar({ user, onLogout }) {
           </div>
 
           {!isLoggedIn ? (
-            <NavLink to="/login" className="nav-login-btn">
+            <button
+              className="nav-login-btn"
+              onClick={() => handleNavClick("login")}
+            >
               Login
-            </NavLink>
+            </button>
           ) : (
             <button className="nav-login-btn" onClick={onLogout}>
               Logout

@@ -1,6 +1,5 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import "./word.css";
 
@@ -13,15 +12,28 @@ import AuthPage from "./components/auth/AuthPage.jsx";
 import Dashboard from "./components/dashboard/Dashboard.jsx";
 
 function App() {
+  const [activePage, setActivePage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("authUser");
-    if (storedUser) setCurrentUser(JSON.parse(storedUser));
+    if (storedUser) {
+      try {
+        setCurrentUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error("Failed to parse authUser", e);
+      }
+    }
   }, []);
+
+  const changePage = (page) => {
+    setActivePage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleLogin = (user) => {
     setCurrentUser(user);
+    changePage("home");
   };
 
   const handleLogout = () => {
@@ -29,66 +41,66 @@ function App() {
     localStorage.removeItem("authEmail");
     localStorage.removeItem("authUser");
     setCurrentUser(null);
+    changePage("home");
   };
 
-  const ProtectedRoute = ({ children }) =>
-    currentUser ? children : <Navigate to="/login" replace />;
+  const handleCreateProject = (kind) => {
+    if (kind === "ppt") changePage("ppt");
+    else changePage("word");
+  };
 
   return (
-    <BrowserRouter>
-      <div className="app">
-        <Navbar user={currentUser} onLogout={handleLogout} />
+    <div className="app">
+      <Navbar
+        activePage={activePage}
+        onChangePage={changePage}
+        user={currentUser}
+        onLogout={handleLogout}
+      />
 
-        <main className="main">
-          <div className="page-container">
-            <Routes>
-              <Route path="/" element={<Home />} />
+      <main className="main">
+        <div className="page-container">
+          {activePage === "home" && (
+            <Home
+              onStartPpt={() => changePage("ppt")}
+              onStartWord={() => changePage("word")}
+            />
+          )}
 
-              <Route
-                path="/ppt"
-                element={
-                  <ProtectedRoute>
-                    <PptGenerator />
-                  </ProtectedRoute>
-                }
+          {activePage === "ppt" && (
+            <section className="page page-narrow">
+              <PptGenerator />
+            </section>
+          )}
+
+          {activePage === "word" && (
+            <section className="page page-narrow">
+              <WordGenerator />
+            </section>
+          )}
+
+          {activePage === "dashboard" && (
+            <section className="page page-narrow">
+              <Dashboard
+                user={currentUser}
+                onCreateProject={handleCreateProject}
               />
+            </section>
+          )}
 
-              <Route
-                path="/word"
-                element={
-                  <ProtectedRoute>
-                    <WordGenerator />
-                  </ProtectedRoute>
-                }
+          {activePage === "login" && (
+            <section className="page">
+              <AuthPage
+                onBackHome={() => changePage("home")}
+                onLogin={handleLogin}
               />
+            </section>
+          )}
+        </div>
+      </main>
 
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard
-                      user={currentUser}
-                      onCreateProject={(kind) => {
-                        window.location.href = kind === "ppt" ? "/ppt" : "/word";
-                      }}
-                    />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/login"
-                element={<AuthPage onLogin={handleLogin} />}
-              />
-
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-        </main>
-
-        <Footer />
-      </div>
-    </BrowserRouter>
+      <Footer />
+    </div>
   );
 }
 
