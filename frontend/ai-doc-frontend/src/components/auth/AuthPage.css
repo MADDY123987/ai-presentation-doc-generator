@@ -1,0 +1,199 @@
+/* Full-page layout for login/register */
+.auth-page {
+  min-height: calc(100vh - 70px); /* navbar height accounted */
+  padding: 80px 16px 40px;        /* 👈 pushes slightly below navbar */
+  display: flex;
+  justify-content: center;       /* center horizontally */
+  align-items: flex-start;       /* 👈 align to top instead of center */
+  background: radial-gradient(circle at top, #0d1229, #020617 65%, #000);
+}
+
+/* Card */
+.auth-page-card {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 22px;
+  padding: 28px;
+  background: #020617;
+  border: 1px solid #1f2937;
+  box-shadow: 0 26px 55px rgba(0,0,0,0.65);
+}
+
+/* Header */
+.auth-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.auth-back {
+  border-radius: 999px;
+  border: 1px solid #374151;
+  background: transparent;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.auth-page-header h1 {
+  margin: 0;
+  font-size: 1.7rem;
+}
+
+.auth-page-header p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* Tabs */
+.auth-page-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.auth-page-tab {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #374151;
+  background: transparent;
+  color: #d1d5db;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.auth-page-tab.active {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #eef2ff;
+}
+
+/* Form */
+.auth-page-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-page-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+  color: #cbd5f5;
+}
+
+.auth-page-form input {
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #f9fafb;
+}
+.auth-page-form input:focus {
+  outline: none;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.7);
+}
+
+/* Submit */
+.auth-page-submit {
+  margin-top: 6px;
+  padding: 10px 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border: none;
+  cursor: pointer;
+  color: #eef2ff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Note */
+.auth-footer-note {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .auth-page-card {
+    padding: 22px 18px;
+  }
+  .auth-page-header h1 {
+    font-size: 1.45rem;
+  }
+}
+/* Keep your existing styles above this and add: */
+
+.auth-divider {
+  text-align: center;
+  margin: 14px 0;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  position: relative;
+}
+.auth-divider:before,
+.auth-divider:after {
+  content: "";
+  height: 1px;
+  width: 40%;
+  background: #334155;
+  position: absolute;
+  top: 50%;
+}
+.auth-divider:before { left: 0; }
+.auth-divider:after { right: 0; }
+
+.oauth-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.oauth-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 10px;
+  padding: 10px 0;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #e5e7eb;
+  transition: 0.2s;
+}
+
+.oauth-btn:hover {
+  background: #1e293b;
+}
+
+.oauth-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+/* GitHub */
+.oauth-btn.github {
+  background: #111;
+  border-color: #000;
+}
+.oauth-btn.github:hover {
+  background: #000;
+}
+
+/* Google */
+.oauth-btn.google {
+  background: #ffffff;
+  color: #222;
+  border-color: #ddd;
+}
+.oauth-btn.google:hover {
+  background: #f3f3f3;
+}

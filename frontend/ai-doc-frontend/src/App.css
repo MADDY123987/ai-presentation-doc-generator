@@ -1,0 +1,196 @@
+/* ONLY layout-specific + navbar + generic page styles */
+/* No .home, .how-steps, .site-footer, .app, .main here */
+
+/* NAVBAR – glassy */
+.navbar {
+  height: 60px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.95),
+    rgba(15, 23, 42, 0.8)
+  );
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #111827;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.nav-logo-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4f46e5, #22c55e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.nav-logo-text span {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.nav-logo-text small {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.nav-center {
+  display: flex;
+  gap: 6px;
+}
+
+.nav-link {
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.nav-link-active {
+  background: #1e293b;
+  color: #e5e7eb;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid #1f2937;
+  font-size: 0.85rem;
+}
+
+.nav-user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.nav-login-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* GENERIC PAGE */
+.page {
+  margin-top: 10px;
+}
+
+.page-narrow {
+  max-width: 900px;
+  margin: 10px auto 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.page-header h2 {
+  margin: 0;
+}
+
+.page-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* You can keep any navbar responsiveness here if you want */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 12px;
+  }
+
+  .nav-center {
+    gap: 4px;
+  }
+
+  .nav-logo-text small {
+    display: none;
+  }
+}
+
+/* NEW: center navbar content so groups are closer together */
+.navbar-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px; /* space between left / center / right groups */
+}
+
+/* make center + right a bit tighter */
+
+
+.nav-center {
+  margin-left: auto;
+  margin-right: auto;     /* centers nav links */
+}
+
+.nav-right {
+  margin-left: 12px;      /* login closer to nav center */
+}
+
+/* auth.css or App.css */
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+.auth-panel {
+  width: 100%;
+  max-width: 420px;
+  background: #020617;
+  border-radius: 18px;
+  border: 1px solid #1f2937;
+  padding: 20px 22px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+}

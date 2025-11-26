@@ -1,0 +1,164 @@
+/* slide-editor.css - direct preview editing, no empty rulesets */
+
+/* Keep existing .slide-card from ppt.css; only add what's needed here */
+
+/* visually hide fallback top/bottom inputs (keeps them in DOM for accessibility/programmatic use) */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Main editable preview tweaks */
+.slide-preview-editable {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,0.03);
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+}
+
+/* Title inside preview — editable */
+.slide-preview-title.editable {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #eef2ff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(3,7,18,0.3);
+  outline: none;
+  min-height: 36px;
+}
+
+/* content area */
+.slide-preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #d1d5db;
+  font-size: 0.86rem;
+}
+
+/* Bullet editor: present each bullet as a block (div) for predictable editing */
+.slide-bullet-editor.editable {
+  min-height: 120px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(2,6,23,0.3);
+  border: 1px solid rgba(255,255,255,0.02);
+  line-height: 1.38;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Each bullet line visually separated */
+.bullet-line {
+  padding: 2px 0;
+}
+
+/* Two-column editable columns */
+.slide-preview-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.slide-preview-col.editable {
+  min-height: 120px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(2,6,23,0.28);
+  border: 1px solid rgba(255,255,255,0.02);
+  overflow: auto;
+  line-height: 1.36;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Image slide layout */
+.slide-image-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.slide-preview-image-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 140px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.03);
+  background: rgba(2,6,23,0.22);
+  overflow: hidden;
+}
+
+.slide-preview-image {
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+}
+
+/* Image caption editable */
+.slide-image-caption.editable {
+  padding: 8px;
+  font-size: 0.84rem;
+  color: #cbd5e1;
+  border-radius: 8px;
+  background: rgba(2,6,23,0.14);
+  border: 1px dashed rgba(255,255,255,0.02);
+  min-height: 42px;
+}
+
+/* Hide fallback controls visually but keep accessible for screen readers/programmatic */
+.slide-hidden-controls {
+  display: none;
+}
+
+/* focus styles for keyboard users */
+.editable:focus {
+  outline: 2px solid rgba(99,102,241,0.35);
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.08);
+}
+
+/* footer */
+.slide-card-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.save-status {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+/* slide save button (copied / small) */
+.slide-save-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: #eef2ff;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* small screens: stack columns */
+@media (max-width: 720px) {
+  .slide-preview-cols {
+    grid-template-columns: 1fr;
+  }
+}

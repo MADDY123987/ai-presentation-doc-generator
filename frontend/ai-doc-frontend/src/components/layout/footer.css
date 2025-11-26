@@ -1,0 +1,25 @@
+/* src/components/layout/footer.css */
+
+.site-footer {
+  border-top: 1px solid #111827;
+  background: radial-gradient(circle at left, #020617, #000000);
+  padding: 10px 24px;
+  font-size: 0.8rem;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-footer-left,
+.site-footer-right {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,30 @@
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.sections-config .section-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.sections-config .section-row span {
+  width: 28px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.section-card {
+  border: 1px solid #1f2937;
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+
+textarea.readonly {
+  opacity: 0.9;
+}

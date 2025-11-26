@@ -1,0 +1,1119 @@
+/* Sample image for local testing (uploaded asset):
+   /mnt/data/cf6a33ff-d0bc-4e56-89d7-6a9513516d8a.png
+*/
+
+/* =========================================================
+   COLOR PALETTE (for reference)
+   ---------------------------------------------------------
+   Background deep:      #020617  / #050816
+   Card surface dark:    #020617
+   Soft surface mid:     #0b1220
+   Accent violet:        #6366f1
+   Accent blue:          #3b82f6
+   Accent teal:          #22c55e
+   Text main:            #e5e7eb
+   Text muted:           #9ca3af
+   ======================================================= */
+
+/* ========== PAGE LAYOUT ========== */
+
+.ppt-page {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ========== HERO SECTION (TOP) ========== */
+
+.ppt-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(260px, 2fr);
+  gap: 26px;
+  padding: 26px 24px;
+  border-radius: 22px;
+  background: radial-gradient(circle at top left, #111827, #020617 60%);
+  border: 1px solid #1f2937;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.85);
+}
+
+.ppt-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #e5e7eb;
+}
+
+.ppt-hero-chip {
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(129, 140, 248, 0.18);
+  color: #c7d2fe;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ppt-hero-title {
+  font-size: 1.9rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.ppt-hero-subtitle {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #d1d5db;
+}
+
+.ppt-hero-description {
+  margin: 4px 0 0;
+  font-size: 0.93rem;
+  color: #9ca3af;
+}
+
+/* hero prompt panel (glass card) */
+
+.ppt-hero-prompt {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  background: radial-gradient(circle at top left, #020617, #020617 60%);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle moving glow */
+.ppt-hero-prompt::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(
+    from 40deg,
+    rgba(99, 102, 241, 0.35),
+    rgba(59, 130, 246, 0.22),
+    rgba(45, 212, 191, 0.2),
+    transparent,
+    transparent
+  );
+  opacity: 0.2;
+  mix-blend-mode: screen;
+  animation: pptPromptGlow 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes pptPromptGlow {
+  0% {
+    transform: translate3d(-10%, -8%, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(12%, 8%, 0) rotate(180deg);
+  }
+  100% {
+    transform: translate3d(-10%, -8%, 0) rotate(360deg);
+  }
+}
+
+.ppt-hero-label {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- PROMPT TEXTAREA (UX FIXES applied here) ---------- */
+/* Key changes:
+   - remove native resize handle
+   - visually hide scrollbars while keeping scroll behavior
+   - add extra right padding so content doesn't feel cramped
+*/
+
+.ppt-hero-textarea {
+  position: relative;
+  z-index: 1;
+  margin-top: 8px;
+  width: 100%;
+  /* keep vertical scrolling but hide native resize UI */
+  resize: none; /* disables native resize handle (corner) */
+  min-height: 140px;
+  max-height: 340px;
+  border-radius: 10px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  padding: 12px 14px; /* give enough padding */
+  padding-right: 18px; /* extra right padding to avoid visual clipping */
+  font-size: 0.9rem;
+  color: #e5e7eb;
+  overflow: auto; /* allow scrolling */
+  line-height: 1.45;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.01);
+}
+
+/* placeholder + focus */
+.ppt-hero-textarea::placeholder {
+  color: #6b7280;
+}
+
+.ppt-hero-textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.55);
+}
+
+/* Hide scrollbars visually but keep scroll functionality */
+.ppt-hero-textarea::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+}
+
+/* make the track invisible */
+.ppt-hero-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* hide the thumb completely (so user won't see it), but keep ability to scroll */
+.ppt-hero-textarea::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+/* Firefox */
+.ppt-hero-textarea {
+  scrollbar-width: none; /* hide scrollbar on FF */
+  -ms-overflow-style: none; /* hide scrollbar on IE 10+ */
+}
+
+/* Fallback: in case some browsers still show a thin track, reduce contrast */
+.ppt-hero-textarea::-webkit-scrollbar-thumb:window-inactive {
+  background: transparent;
+}
+
+/* small helpful hint: keep accessible focus outline for keyboard users */
+.ppt-hero-textarea:focus {
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.18), 0 0 0 1px rgba(99, 102, 241, 0.55);
+}
+
+/* ppt hero footer + counters remain same */
+.ppt-hero-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.ppt-hero-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: #9ca3af;
+}
+
+.ppt-hero-small-label {
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ppt-hero-small-label input[type="number"] {
+  width: 90px;
+  border-radius: 999px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.ppt-hero-small-label input[type="number"]:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.5);
+}
+
+.ppt-hero-counter {
+  color: #6b7280;
+}
+
+.ppt-hero-footer-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* buttons */
+
+.ppt-hero-idea-btn {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  padding: 6px 12px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.ppt-hero-idea-btn:hover {
+  background: #111827;
+}
+
+.ppt-hero-generate-btn {
+  border-radius: 999px;
+  border: none;
+  padding: 7px 18px;
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: #eef2ff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9),
+    0 16px 30px rgba(37, 99, 235, 0.4);
+}
+
+.ppt-hero-generate-btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+  box-shadow: none;
+}
+
+.ppt-hero-error {
+  margin-top: 4px;
+}
+
+/* hero right visual */
+
+.ppt-hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ppt-hero-visual-card {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 4 / 3;
+  border-radius: 24px;
+  background: radial-gradient(circle at top left, #6366f1, #3b82f6, #f97316);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  text-align: center;
+  color: #020617;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+}
+
+.ppt-hero-visual-icon {
+  font-size: 2.4rem;
+  margin-bottom: 10px;
+}
+
+.ppt-hero-visual-text {
+  font-size: 0.9rem;
+  max-width: 260px;
+}
+
+/* =========================================================
+   INFO + HOW IT WORKS (UNDER HERO)
+   ======================================================= */
+
+.ppt-info {
+  margin-top: 4px;
+  padding: 20px 22px 24px;
+  border-radius: 20px;
+  border: 1px solid #111827;
+  background: radial-gradient(circle at top left, #020617, #020617 65%);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.95);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  color: #e5e7eb;
+}
+
+/* top row: visual + copy */
+
+.ppt-fast-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 2.2fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.ppt-fast-media {
+  display: flex;
+  justify-content: center;
+}
+
+.ppt-fast-card {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 4 / 3;
+  border-radius: 22px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: radial-gradient(circle at top left, #4f46e5, #3b82f6, #f97316);
+  color: #f9fafb;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+  font-size: 0.9rem;
+}
+
+.ppt-fast-icon {
+  font-size: 2.4rem;
+  margin-bottom: 10px;
+}
+
+.ppt-fast-card-text {
+  max-width: 260px;
+}
+
+.ppt-fast-copy h2 {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  color: #e5e7eb;
+}
+
+.ppt-fast-copy p {
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+  color: #9ca3af;
+}
+
+.ppt-fast-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.86rem;
+  color: #9ca3af;
+}
+
+.ppt-fast-list li + li {
+  margin-top: 4px;
+}
+
+/* steps section */
+
+.ppt-steps {
+  margin-top: 4px;
+}
+
+.ppt-steps h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  color: #e5e7eb;
+}
+
+.ppt-steps-subtitle {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.ppt-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ppt-step-card {
+  position: relative;
+  padding: 12px 12px 14px;
+  border-radius: 14px;
+  background: #020617;
+  border: 1px solid #111827;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.9);
+  font-size: 0.86rem;
+}
+
+.ppt-step-number {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: #eef2ff;
+  margin-bottom: 6px;
+}
+
+.ppt-step-card h4 {
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+  color: #e5e7eb;
+}
+
+.ppt-step-card p {
+  margin: 0;
+  color: #9ca3af;
+}
+
+/* ========== STEP CARDS (EDIT / THEME / EXPORT) ========== */
+
+.ppt-page .card.ppt-step-card {
+  position: relative;
+  background: #020617;
+  border-radius: 18px;
+  border: 1px solid #111827;
+  padding: 18px 20px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+  overflow: hidden;
+}
+
+.ppt-page .card.ppt-step-card::before {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  background: radial-gradient(
+    circle at top left,
+    rgba(99, 102, 241, 0.3),
+    rgba(59, 130, 246, 0.16),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ppt-page .card.ppt-step-card:hover::before {
+  opacity: 1;
+}
+
+.ppt-page .card.ppt-step-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.ppt-page .card.ppt-step-card h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  color: #e5e7eb;
+}
+
+.ppt-page .card-caption {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.ppt-page .meta-line {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin: 4px 0 12px;
+}
+
+/* fields inside dark cards */
+
+.ppt-page .field-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.ppt-page .field-grid label {
+  flex: 1 1 180px;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+}
+
+.ppt-page input[type="text"],
+.ppt-page input[type="number"],
+.ppt-page select {
+  margin-top: 4px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+}
+
+.ppt-page input:focus,
+.ppt-page select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.4);
+}
+/* buttons in step cards */
+
+/* Secondary action button (Start over) */
+.ppt-page .secondary-action {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.ppt-page .secondary-action:hover {
+  background: #1e293b;         /* softer dark hover */
+  border-color: #64748b;
+  transform: translateY(-2px);
+}
+
+/* Export PPTX button — Dark themed */
+.ppt-page .export-button {
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: #1e293b;         /* dark navy */
+  border: 1px solid #334155;   /* subtle outline */
+  color: #e2e8f0;              /* soft text */
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.ppt-page .export-button:hover {
+  background: #0f172a;         /* deeper dark */
+  border-color: #475569;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.45);
+}
+
+/* slide editor list */
+
+/* grid layout for slide cards */
+.ppt-page .slides-list {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+
+.ppt-page .error {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #f97373;
+}
+
+/* ========== RESPONSIVE ========== */
+
+/* hero stack on small screens */
+@media (max-width: 900px) {
+  .ppt-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ppt-hero-visual {
+    order: -1;
+  }
+}
+
+/* info row + steps grid breakpoints */
+@media (max-width: 960px) {
+  .ppt-fast-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ppt-steps-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .ppt-info {
+    padding: 16px 14px 18px;
+  }
+
+  .ppt-steps-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ppt-hero-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ppt-hero-footer-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================================
+   SLIDE EDITOR CARDS
+   ======================================================= */
+
+.slide-card {
+  background: #020617;
+  border-radius: 16px;
+  border: 1px solid #111827;
+  padding: 12px 14px 14px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.15s ease-out,
+    border-color 0.15s ease-out,
+    background 0.15s ease-out;
+}
+
+.slide-card::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(
+    circle at top left,
+    rgba(99, 102, 241, 0.22),
+    rgba(59, 130, 246, 0.16),
+    transparent 65%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-out;
+}
+
+.slide-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.95);
+  border-color: #4f46e5;
+}
+
+.slide-card:hover::before {
+  opacity: 1;
+}
+
+/* header row */
+
+.slide-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+
+.slide-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(55, 65, 81, 0.9);
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+.slide-layout-pill {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(79, 70, 229, 0.25);
+  color: #c7d2fe;
+  font-weight: 500;
+}
+
+/* title input */
+
+.slide-title-input {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  padding: 6px 12px;
+  font-size: 0.86rem;
+  color: #e5e7eb;
+}
+
+.slide-title-input::placeholder {
+  color: #6b7280;
+}
+
+.slide-title-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.55);
+}
+
+/* slide preview */
+
+.slide-preview {
+  border-radius: 12px;
+  border: 1px solid #111827;
+  background: radial-gradient(circle at top left, #020617, #020617 65%);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  aspect-ratio: 16 / 9;
+}
+
+.slide-preview-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  border-bottom: 1px solid #111827;
+  padding-bottom: 4px;
+}
+
+.slide-preview-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-size: 0.78rem;
+  color: #d1d5db;
+}
+
+.slide-preview-content ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.slide-preview-content li + li {
+  margin-top: 2px;
+}
+
+.slide-preview-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.slide-preview-col {
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px dashed #1f2937;
+  min-height: 40px;
+  font-size: 0.78rem;
+}
+
+.slide-preview-image-box {
+  border-radius: 10px;
+  border: 1px dashed #1f2937;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+/* fields under preview */
+
+.slide-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+}
+
+.slide-field-label {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.slide-two-column-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.slide-input,
+.slide-textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  resize: vertical;
+}
+
+.slide-input::placeholder,
+.slide-textarea::placeholder {
+  color: #6b7280;
+}
+
+.slide-input:focus,
+.slide-textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.4);
+}
+
+/* footer */
+
+.slide-card-footer {
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.slide-save-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: #eef2ff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+}
+
+.slide-save-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* responsive tweaks */
+
+@media (max-width: 768px) {
+  .slide-two-column-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================= THEME PICKER & THUMBNAILS ================= */
+/* ================= THEME PICKER (adjusted: 3x3 grid with selected preview stacked below) ================= */
+
+/* Parent of the grid + preview: force stacking so preview appears below the 3x3 grid */
+.field-grid {
+  display: flex;
+  flex-direction: column; /* stack grid first, then preview */
+  gap: 14px;
+  align-items: stretch;
+}
+
+/* Main grid: desktop shows 3 columns of theme thumbnails (3x3 layout) */
+.theme-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr)); /* 3 boxes per row */
+  gap: 12px;
+  margin-top: 0; /* parent .field-grid already provides gap */
+  align-items: start;
+}
+
+/* Thumbnail button (clickable) */
+.theme-thumb {
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+  cursor: pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  min-height: 120px;
+  text-align: center;
+}
+
+/* Thumbnail image box */
+.theme-thumb img {
+  width: 100%;
+  height: 72px;
+  border-radius: 6px;
+  object-fit: cover;
+  display:block;
+  box-shadow: 0 8px 18px rgba(2,6,23,0.6);
+}
+
+/* Label under the thumb */
+.theme-thumb .theme-thumb-label {
+  font-size: 12px;
+  color: #cbd5e1;
+  text-align: center;
+  padding: 6px 4px;
+  line-height:1.1;
+}
+
+/* hover + selected states */
+.theme-thumb:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(45, 55, 90, 0.4);
+  border-color: rgba(99,102,241,0.48);
+}
+
+.theme-thumb.selected {
+  box-shadow: 0 20px 44px rgba(59,130,246,0.14);
+  border-color: rgba(99,102,241,0.7);
+  transform: translateY(-6px);
+}
+
+/* ========== Selected preview (smaller, centered, stacked under grid) ========== */
+
+/* Container that holds the preview image (keeps it compact and matching thumbnail scale) */
+.theme-preview-large {
+  width: 200px;          /* reduced more */
+  height: 110px;         /* reduced more */
+  border-radius: 12px;
+  border: 1px solid #111827;
+  overflow: hidden;
+  background: #0b1220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  margin-top: 12px;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.55);
+}
+/* center the preview when parent width is wide */
+.field-grid > .theme-preview-large {
+  margin-left: 0;      /* left align; change to auto to center if preferred */
+}
+
+/* preview image fitting rules */
+.theme-preview-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* keep aspect ratio perfectly */
+  border-radius: 8px;
+}
+
+/* responsive behavior for the theme grid */
+/* reduce columns on medium screens */
+@media (max-width: 1100px) {
+  .theme-picker-grid {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+  .theme-preview-large {
+    width: 260px; /* slightly wider on narrower screens to remain readable */
+    height: 150px;
+  }
+}
+
+/* single column on very small screens */
+@media (max-width: 640px) {
+  .theme-picker-grid {
+    grid-template-columns: repeat(1, minmax(120px, 1fr));
+  }
+  .theme-preview-large {
+    width: 100%;
+    height: 160px;
+  }
+}
+
+
+/* ============ INLINE PREVIEW EDITING (for SlideEditor contentEditable blocks) ============ */
+
+/* A nicer contentEditable block for bullets */
+.inline-bullets-edit {
+  min-height: 120px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(2,6,23,0.4);
+  border: 1px dashed rgba(31,41,55,0.6);
+  color: #d1d5db;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  outline: none;
+}
+
+/* style for editable two-column blocks */
+.inline-col-edit {
+  min-height: 80px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px dashed rgba(31,41,55,0.6);
+  background: rgba(2,6,23,0.35);
+  color: #d1d5db;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  overflow-y: auto;
+  outline: none;
+}
+
+/* caption / image-url editable area */
+.inline-caption-edit {
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px dashed rgba(31,41,55,0.6);
+  background: rgba(2,6,23,0.25);
+  color: #9ca3af;
+  font-size: 0.82rem;
+  line-height: 1.3;
+  min-height: 44px;
+  outline: none;
+}
+
+/* Keep focus ring accessible for keyboard users */
+.inline-bullets-edit:focus,
+.inline-col-edit:focus,
+.inline-caption-edit:focus {
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12), 0 0 0 1px rgba(99,102,241,0.44);
+  border-color: rgba(99,102,241,0.44);
+}
+
+/* small tweak to remove default editable caret background on some OS */
+.inline-bullets-edit::selection,
+.inline-col-edit::selection,
+.inline-caption-edit::selection {
+  background: rgba(99,102,241,0.22);
+}
+
+/* scrollbar styling for inline editable blocks (kept subtle) */
+.inline-bullets-edit::-webkit-scrollbar,
+.inline-col-edit::-webkit-scrollbar,
+.inline-caption-edit::-webkit-scrollbar {
+  width: 6px;
+}
+.inline-bullets-edit::-webkit-scrollbar-thumb,
+.inline-col-edit::-webkit-scrollbar-thumb,
+.inline-caption-edit::-webkit-scrollbar-thumb {
+  background: rgba(99,102,241,0.14);
+  border-radius: 999px;
+}
+.inline-bullets-edit::-webkit-scrollbar-track,
+.inline-col-edit::-webkit-scrollbar-track,
+.inline-caption-edit::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ================= Accessibility / small niceties ================= */
+
+/* reduce button focus outline harshness across the board */
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+}
+
+/* ensure images inside slide previews do not overflow */
+.slide-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+}

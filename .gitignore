@@ -1,0 +1,16 @@
+# Python / Backend
+__pycache__/
+*.pyc
+ai-ppt-slide-generator/.env
+
+# Node / Frontend
+ai-doc-frontend/node_modules/
+ai-doc-frontend/.env
+
+# Generated files
+generated_samples/
+
+# System / IDE
+.DS_Store
+.vscode/
+backend/.env 
