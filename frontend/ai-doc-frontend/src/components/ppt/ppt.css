@@ -651,3 +651,76 @@
   padding: 5px 12px;
   font-size: 0.8rem;
 }
+
+/* =========================================================
+   THEME PICKER (STEP 3)
+   ======================================================= */
+
+/* Grid of theme thumbnails */
+.ppt-page .theme-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+/* Each theme thumbnail button */
+.ppt-page .theme-thumb {
+  position: relative;
+  border-radius: 14px;
+  padding: 4px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.8);
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.ppt-page .theme-thumb img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+}
+
+/* Label under the thumbnail */
+.ppt-page .theme-thumb-label {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #e5e7eb;
+  text-align: center;
+  padding: 2px 4px 4px;
+}
+
+/* Hover + selected states */
+.ppt-page .theme-thumb:hover {
+  border-color: #6366f1;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45);
+  transform: translateY(-2px);
+}
+
+.ppt-page .theme-thumb.selected {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.6),
+              0 16px 32px rgba(37,99,235,0.55);
+}
+
+/* Large preview card on the right */
+.ppt-page .theme-preview-large {
+  width: 220px;
+  max-width: 100%;
+  border-radius: 16px;
+  padding: 6px;
+  background: #020617;
+  border: 1px solid #1f2937;
+  box-shadow: 0 14px 32px rgba(15,23,42,0.9);
+}
+
+.ppt-page .theme-preview-large img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
