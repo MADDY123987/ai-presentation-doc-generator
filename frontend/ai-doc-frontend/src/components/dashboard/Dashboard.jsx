@@ -3,10 +3,9 @@ import React, { useEffect, useState } from "react";
 import "./dashboard.css";
 import { BASE_URL, AUTH_BASE_URL } from "../../config";
 
-// Use Render backend everywhere (no localhost)
-// BASE_URL already includes /api/v1
-const API_BASE = BASE_URL; // -> https://.../api/v1
-const API_HOST = AUTH_BASE_URL; // -> https://... (without /api/v1)
+// API base: same as backend
+const API_BASE = BASE_URL;      // e.g. https://ai-doc-backend-hecs.onrender.com/api/v1
+const API_HOST = AUTH_BASE_URL; // e.g. https://ai-doc-backend-hecs.onrender.com
 
 function Dashboard({ user, onCreateProject }) {
   const [loading, setLoading] = useState(true);
@@ -17,17 +16,16 @@ function Dashboard({ user, onCreateProject }) {
   const [modalLoading, setModalLoading] = useState(false);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
 
+  // ---- auth helper ----
   const getAuthHeaders = () => {
     const token = localStorage.getItem("authToken");
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  // ---------- secure download helper (uses auth token) ----------
+  // ---- download helper ----
   const handleDownload = async (url, filenameFallback = "file") => {
     try {
-      const headers = getAuthHeaders();
-
-      const res = await fetch(url, { headers });
+      const res = await fetch(url, { headers: getAuthHeaders() });
       if (!res.ok) {
         console.error("Download failed:", res.status, await res.text());
         alert(`Download failed: ${res.status}`);
@@ -50,40 +48,41 @@ function Dashboard({ user, onCreateProject }) {
     }
   };
 
+  // ---- load dashboard items ----
   useEffect(() => {
     const fetchData = async () => {
-      const headers = {
-        Accept: "application/json",
-        ...getAuthHeaders(),
-      };
+      setLoading(true);
+      setError("");
 
       try {
         const res = await fetch(`${API_BASE}/dashboard/items`, {
-          headers,
+          headers: {
+            Accept: "application/json",
+            ...getAuthHeaders(),
+          },
         });
 
-        // Handle fresh dashboard: 404 means no data created yet
         if (res.status === 404) {
-          console.log("Dashboard: No items found yet (404)");
-          setItems(null); // triggers empty state UI
-          setError(""); // no red error message
+          // Fresh user: no projects yet
+          setItems(null);
+          setError("");
         } else {
           const data = await res.json();
-
           if (!res.ok) {
-            console.error("Dashboard API error:", res.status, data);
+            console.error("Dashboard error:", res.status, data);
             setError(
               data.detail || `Backend error: ${res.status} ${res.statusText}`
             );
             setItems(null);
           } else {
             setItems(data);
-            setError(""); // ensure no leftover error shows
+            setError("");
           }
         }
       } catch (err) {
         console.error("Dashboard fetch failed:", err);
         setError(err.message || "Unknown error");
+        setItems(null);
       } finally {
         setLoading(false);
       }
@@ -105,72 +104,24 @@ function Dashboard({ user, onCreateProject }) {
     const MAX_CHARS = 160;
     if (!item) return "";
 
-    if (item.summary && String(item.summary).trim())
-      return String(item.summary).trim();
-    if (item.preview && String(item.preview).trim())
-      return String(item.preview).trim();
+    const content =
+      item.summary ||
+      item.preview ||
+      (Array.isArray(item.content) ? item.content[0]?.title : "") ||
+      item.title ||
+      item.topic ||
+      item.name ||
+      "";
 
-    const content = item.content || item.full_content || item.full_text;
-    try {
-      if (Array.isArray(content) && content.length > 0) {
-        const first = content[0];
-        if (first) {
-          if (typeof first === "string" && first.trim()) {
-            const s = first.trim();
-            return s.length > MAX_CHARS ? s.slice(0, MAX_CHARS) + "…" : s;
-          }
-          if (typeof first === "object") {
-            const t = (first.title || first.heading || "").toString().trim();
-            if (t)
-              return t.length > MAX_CHARS ? t.slice(0, MAX_CHARS) + "…" : t;
-            const bullets = first.bullets || first.points || first.body || [];
-            if (Array.isArray(bullets) && bullets.length > 0) {
-              const b0 = String(bullets[0]).trim();
-              if (b0)
-                return b0.length > MAX_CHARS ? b0.slice(0, MAX_CHARS) + "…" : b0;
-            }
-            const textFields = ["description", "text", "content", "summary"];
-            for (const k of textFields) {
-              if (first[k] && String(first[k]).trim()) {
-                const s = String(first[k]).trim();
-                return s.length > MAX_CHARS ? s.slice(0, MAX_CHARS) + "…" : s;
-              }
-            }
-          }
-        }
-      } else if (typeof content === "string" && content.trim()) {
-        const s = content.trim();
-        return s.length > MAX_CHARS ? s.slice(0, MAX_CHARS) + "…" : s;
-      }
-    } catch (e) {
-      console.warn("makePreviewText parsing error:", e);
-    }
-
-    const candidate = (item.title || item.topic || item.name || "")
-      .toString()
-      .trim();
-    if (candidate)
-      return candidate.length > MAX_CHARS
-        ? candidate.slice(0, MAX_CHARS) + "…"
-        : candidate;
-
-    return ``;
+    const s = String(content).trim();
+    if (!s) return "";
+    return s.length > MAX_CHARS ? s.slice(0, MAX_CHARS) + "…" : s;
   };
 
   const openReadMore = async (item, type = "presentation") => {
-    setModalLoading(true);
     setModalOpen(true);
+    setModalLoading(true);
     setModalContent({ title: "Loading…", body: "" });
-
-    if (item.full_text || item.full_content || item.content) {
-      const body = item.full_text || item.full_content || item.content;
-      setModalContent({
-        title: item.title || item.topic || `${type} #${item.id}`,
-        body: typeof body === "string" ? body : JSON.stringify(body, null, 2),
-      });
-      setModalLoading(false);
-      return;
-    }
 
     try {
       const endpoint =
@@ -179,19 +130,23 @@ function Dashboard({ user, onCreateProject }) {
           : `${API_BASE}/documents/${item.id}`;
 
       const res = await fetch(endpoint, {
-        headers: getAuthHeaders(),
+        headers: {
+          Accept: "application/json",
+          ...getAuthHeaders(),
+        },
       });
       const data = await res.json();
+
       if (!res.ok) {
-        console.error("Read more fetch failed:", res.status, data);
         setModalContent({
           title: "Failed to load",
           body: data.detail || `Error ${res.status}`,
         });
       } else {
+        let bodyText = "";
         if (type === "presentation") {
           const slides = data.content || [];
-          const bodyText = slides
+          bodyText = slides
             .map((s, i) => {
               const t = s?.title ? `Title: ${s.title}` : "";
               const bullets =
@@ -203,38 +158,27 @@ function Dashboard({ user, onCreateProject }) {
               return `Slide ${i + 1}\n${t}${bullets}${left}${right}`;
             })
             .join("\n\n");
-          setModalContent({
-            title:
-              data.topic ||
-              data.title ||
-              `Presentation ${data.presentation_id || item.id}`,
-            body: bodyText || JSON.stringify(data.content || data, null, 2),
-          });
+        } else if (data.sections && Array.isArray(data.sections)) {
+          bodyText = data.sections
+            .map(
+              (s, i) =>
+                `Section ${i + 1} — ${s.title || ""}\n\n${
+                  s.content || s.body || ""
+                }`
+            )
+            .join("\n\n----\n\n");
         } else {
-          if (data.sections && Array.isArray(data.sections)) {
-            const bodyText = data.sections
-              .map(
-                (s, i) =>
-                  `Section ${i + 1} — ${s.title || ""}\n\n${
-                    s.content || s.body || ""
-                  }`
-              )
-              .join("\n\n----\n\n");
-            setModalContent({
-              title: data.title || item.title || `Document ${item.id}`,
-              body: bodyText || JSON.stringify(data, null, 2),
-            });
-          } else {
-            setModalContent({
-              title: data.title || item.title || `Document ${item.id}`,
-              body:
-                data.content || data.body || JSON.stringify(data, null, 2),
-            });
-          }
+          bodyText =
+            data.content || data.body || JSON.stringify(data, null, 2);
         }
+
+        setModalContent({
+          title: data.title || data.topic || item.title || `Project ${item.id}`,
+          body: bodyText,
+        });
       }
     } catch (err) {
-      console.error("Read more fetch error:", err);
+      console.error("Read more error:", err);
       setModalContent({
         title: "Error",
         body: err.message || "Unknown error",
@@ -255,13 +199,10 @@ function Dashboard({ user, onCreateProject }) {
 
   const handleCreate = (kind) => {
     setShowCreateMenu(false);
-    if (onCreateProject) {
-      onCreateProject(kind); // 👈 App decides ppt/word page
-    }
+    if (onCreateProject) onCreateProject(kind); // App switches page
   };
 
-  // ------------- build "flat" Overleaf-style project list -------------
-
+  // ---- flatten projects ----
   const presentations = items?.presentations || [];
   const documents = items?.projects || items?.documents || [];
 
@@ -280,24 +221,20 @@ function Dashboard({ user, onCreateProject }) {
           ? p.download_endpoint
           : `${API_HOST}${p.download_endpoint}`),
     })),
-    ...documents.map((d) => {
-      const type = (d.type || "DOCX").toUpperCase();
-      const ext = (d.type || "docx").toLowerCase();
-      return {
-        id: d.id,
-        kind: type,
-        ext,
-        title: d.title || "Untitled document",
-        created_at: d.created_at,
-        preview: makePreviewText(d),
-        raw: d,
-        downloadUrl:
-          d.download_endpoint &&
-          (d.download_endpoint.startsWith("http")
-            ? d.download_endpoint
-            : `${API_HOST}${d.download_endpoint}`),
-      };
-    }),
+    ...documents.map((d) => ({
+      id: d.id,
+      kind: (d.type || "DOCX").toUpperCase(),
+      ext: (d.type || "docx").toLowerCase(),
+      title: d.title || "Untitled document",
+      created_at: d.created_at,
+      preview: makePreviewText(d),
+      raw: d,
+      downloadUrl:
+        d.download_endpoint &&
+        (d.download_endpoint.startsWith("http")
+          ? d.download_endpoint
+          : `${API_HOST}${d.download_endpoint}`),
+    })),
   ].sort((a, b) => {
     const ta = a.created_at ? new Date(a.created_at).getTime() : 0;
     const tb = b.created_at ? new Date(b.created_at).getTime() : 0;
@@ -360,10 +297,12 @@ function Dashboard({ user, onCreateProject }) {
 
       {projects.length === 0 ? (
         <div className="dashboard-empty-shell">
-          <p className="dashboard-empty-title">You don&apos;t have projects yet.</p>
+          <p className="dashboard-empty-title">
+            You don&apos;t have projects yet.
+          </p>
           <p className="dashboard-empty-sub">
-            Click <strong>New project</strong> to generate your first PPT or Word
-            document. It will show up here automatically.
+            Click <strong>New project</strong> to generate your first PPT or
+            Word document. It will show up here automatically.
           </p>
         </div>
       ) : (
@@ -486,3 +425,4 @@ function Dashboard({ user, onCreateProject }) {
 }
 
 export default Dashboard;
+6
