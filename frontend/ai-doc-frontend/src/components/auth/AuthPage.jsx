@@ -1,7 +1,7 @@
 // src/components/auth/AuthPage.jsx
 import React, { useState } from "react";
 import "./AuthPage.css";
-import { BASE_URL } from "../../config";   // ✅ use the same BASE_URL
+import { AUTH_BASE_URL } from "../../config"; // <-- IMPORTANT FIX
 
 function AuthPage({ onBackHome, onLogin }) {
   const [mode, setMode] = useState("login");
@@ -16,7 +16,7 @@ function AuthPage({ onBackHome, onLogin }) {
 
     try {
       if (mode === "register") {
-        const res = await fetch(`${BASE_URL}/auth/register`, {
+        const res = await fetch(`${AUTH_BASE_URL}/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -32,7 +32,7 @@ function AuthPage({ onBackHome, onLogin }) {
         form.append("username", email);
         form.append("password", password);
 
-        const res = await fetch(`${BASE_URL}/auth/jwt/login`, {
+        const res = await fetch(`${AUTH_BASE_URL}/auth/jwt/login`, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: form.toString(),
@@ -44,12 +44,10 @@ function AuthPage({ onBackHome, onLogin }) {
         const token = data.access_token;
         if (!token) throw new Error("No access token received");
 
-        // 🔐 store token for PPT/Word generators
         localStorage.setItem("authToken", token);
         localStorage.setItem("authEmail", email);
 
-        // load profile from the SAME backend
-        const meRes = await fetch(`${BASE_URL}/users/me`, {
+        const meRes = await fetch(`${AUTH_BASE_URL}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
